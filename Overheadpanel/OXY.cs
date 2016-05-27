@@ -42,7 +42,7 @@ namespace Overheadpanel
             }
             if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH && fsi.MBI_OXYGEN_PASS_OXY_SWITCH == true)
             {
-                debug("OXY Pass OFF");
+                debug("OXY Pass NORM");
 
                 fsi.MBI_OXYGEN_PASS_OXY_LIGHT = false;
                 fsi.ProcessWrites();
