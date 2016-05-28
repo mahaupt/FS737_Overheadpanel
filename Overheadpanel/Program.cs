@@ -23,6 +23,7 @@ namespace Overheadpanel
             HEAT heat = new HEAT();
             ANTIICE antiice = new ANTIICE();
             HYDRAULICS hydraulics = new HYDRAULICS();
+            ELEC elec = new ELEC();
             
             while(true)
             {
