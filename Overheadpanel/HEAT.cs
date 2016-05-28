@@ -33,14 +33,14 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_HEAT_AUX_PITOT_LIGHT = false;
-            fsi.MBI_HEAT_CAPT_PITOT_LIGHT = false;
-            fsi.MBI_HEAT_FO_PITOT_LIGHT = false;
-            fsi.MBI_HEAT_L_ALPHA_VANE_LIGHT = false;
-            fsi.MBI_HEAT_L_ELEV_PITOT_LIGHT = false;
-            fsi.MBI_HEAT_R_ALPHA_VANE_LIGHT = false;
-            fsi.MBI_HEAT_R_ELEV_PITOT_LIGHT = false;
-            fsi.MBI_HEAT_TEMP_PROBE_LIGHT = false;
+            fsi.MBI_HEAT_AUX_PITOT_LIGHT = true;
+            fsi.MBI_HEAT_CAPT_PITOT_LIGHT = true;
+            fsi.MBI_HEAT_FO_PITOT_LIGHT = true;
+            fsi.MBI_HEAT_L_ALPHA_VANE_LIGHT = true;
+            fsi.MBI_HEAT_L_ELEV_PITOT_LIGHT = true;
+            fsi.MBI_HEAT_R_ALPHA_VANE_LIGHT = true;
+            fsi.MBI_HEAT_R_ELEV_PITOT_LIGHT = true;
+            fsi.MBI_HEAT_TEMP_PROBE_LIGHT = true;
             fsi.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT = false;
             fsi.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT = false;
             fsi.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT = false;
@@ -150,6 +150,49 @@ namespace Overheadpanel
                 fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT = fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH;
                 fsi.ProcessWrites();
                 
+            }
+
+
+            //Probes A
+            if (id == FSIID.MBI_HEAT_PROBE_HEAT_A_SWITCH)
+            {
+                if (fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH)
+                {
+                    debug("HEAT PROBE A On");
+                }
+                else
+                {
+                    debug("HEAT PROBE A Off");
+                }
+
+                //set lights
+                fsi.MBI_HEAT_L_ALPHA_VANE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
+                fsi.MBI_HEAT_L_ELEV_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
+                fsi.MBI_HEAT_CAPT_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
+                fsi.MBI_HEAT_TEMP_PROBE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
+                fsi.ProcessWrites();
+
+            }
+
+            //Probes B
+            if (id == FSIID.MBI_HEAT_PROBE_HEAT_B_SWITCH)
+            {
+                if (fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH)
+                {
+                    debug("HEAT PROBE B On");
+                }
+                else
+                {
+                    debug("HEAT PROBE B Off");
+                }
+
+                //set lights
+                fsi.MBI_HEAT_R_ALPHA_VANE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
+                fsi.MBI_HEAT_R_ELEV_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
+                fsi.MBI_HEAT_FO_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
+                fsi.MBI_HEAT_AUX_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
+                fsi.ProcessWrites();
+
             }
         }
     }

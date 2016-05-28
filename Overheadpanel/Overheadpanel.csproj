@@ -46,6 +46,7 @@
     <Compile Include="ANTIICE.cs" />
     <Compile Include="ELEC.cs" />
     <Compile Include="ELT.cs" />
+    <Compile Include="FUEL.cs" />
     <Compile Include="HEAT.cs" />
     <Compile Include="HYDRAULICS.cs" />
     <Compile Include="IRS.cs" />
