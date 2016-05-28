@@ -187,7 +187,7 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_APU_GEN_2_SWITCH_OFF_POS)
                 {
                     debug("ELEC APU GEN 2 Off");
-                    apu_gen2 = false:
+                    apu_gen2 = false;
                 }
                 if (fsi.MBI_ELEC_BUS_APU_GEN_2_SWITCH_ON_POS)
                 {
