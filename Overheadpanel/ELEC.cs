@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -22,7 +23,10 @@ namespace Overheadpanel
             fsi.OnVarReceiveEvent += fsiOnVarReceive;
             fsi.DeclareAsWanted(new FSIID[]
                 {
-                    FSIID.IOS_GRD_PWR_CONNECTED, 
+                    FSIID.IOS_GRD_PWR_CONNECTED,
+                    FSIID.SLI_APU_GEN_RTL,
+                    FSIID.SLI_GEN_1_RTL,
+                    FSIID.SLI_GEN_2_RTL,
 
                     FSIID.MBI_ELEC_BUS_APU_GEN_1_SWITCH_OFF_POS,
                     FSIID.MBI_ELEC_BUS_APU_GEN_1_SWITCH_ON_POS,
@@ -67,12 +71,17 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT = false;
-            fsi.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT = false;
-            fsi.MBI_ELEC_STBY_GEN_1_DRIVE_LIGHT = false;
-            fsi.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT = false;
+            LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_STBY_GEN_1_DRIVE_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, true);
+            LightController.set(FSIID.MBI_ELEC_BUS_APU_GEN_OFF_BUS_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_GEN_OFF_BUS_LIGHT, true);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_GEN_OFF_BUS_LIGHT, true);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
@@ -91,7 +100,22 @@ namespace Overheadpanel
                 }
 
                 //GND PWD available
-                fsi.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT= fsi.IOS_GRD_PWR_CONNECTED;
+                LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, fsi.IOS_GRD_PWR_CONNECTED);
+                simElectrics();
+            }
+
+            //GROUND POWER SWITCH
+            if (id == FSIID.MBI_ELEC_BUS_GRD_PWR_SWITCH)
+            {
+                if (fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH)
+                {
+                    debug("ELEC GND PWR SWITCH On");
+                }
+                else
+                {
+                    debug("ELEC GND PWR SWITCH Off");
+                }
+
                 simElectrics();
             }
 
@@ -101,12 +125,10 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_IND_BATTERY_SWITCH)
                 {
                     debug("ELEC DC Bat On");
-                    fsi.SLI_BAT_BUS_VOLTAGE = 24;
                 }
                 else
                 {
                     debug("ELEC DC Bat Off");
-                    fsi.SLI_BAT_BUS_VOLTAGE = 0;
                 }
 
                 simElectrics();
@@ -127,8 +149,8 @@ namespace Overheadpanel
                 }
 
                 //take changes
-                fsi.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT = !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS && !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS && !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS);
+                LightController.ProcessWrites();
             }
 
             //stby Gen 1
@@ -144,8 +166,8 @@ namespace Overheadpanel
                 }
 
                 //GND PWD available
-                fsi.MBI_ELEC_STBY_GEN_1_DRIVE_LIGHT = !fsi.MBI_ELEC_STBY_GEN_1_DISCONNECT_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ELEC_STBY_GEN_1_DRIVE_LIGHT, !fsi.MBI_ELEC_STBY_GEN_1_DISCONNECT_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //stby Gen 2
@@ -161,8 +183,8 @@ namespace Overheadpanel
                 }
 
                 //GND PWD available
-                fsi.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT = !fsi.MBI_ELEC_STBY_GEN_2_DISCONNECT_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT, !fsi.MBI_ELEC_STBY_GEN_2_DISCONNECT_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //APU gen 1
@@ -242,6 +264,13 @@ namespace Overheadpanel
                 }
                 simElectrics();
             }
+
+
+            //some changes in generator availability
+            if (id == FSIID.SLI_APU_GEN_RTL || id == FSIID.SLI_GEN_1_RTL || id == FSIID.SLI_GEN_2_RTL)
+            {
+                simElectrics();
+            }
         }
 
 
@@ -250,17 +279,106 @@ namespace Overheadpanel
         private static void simElectrics()
         {
 
-            //only battery on -> battery discharge light
-            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH && //barrer switch on
-                !(fsi.IOS_GRD_PWR_CONNECTED && fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH)) //gnd pwr off
+            //battery discharge light
+            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH && //battery switch on
+                !(fsi.IOS_GRD_PWR_CONNECTED && fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH) && //gnd pwr off
+                !(fsi.SLI_APU_GEN_RTL && (apu_gen1 || apu_gen2)) && //APU GEN off
+                !(fsi.SLI_GEN_1_RTL && eng1_gen) && //ENG 1 Pwr off
+                !(fsi.SLI_GEN_2_RTL && eng2_gen)) //ENG 2 Pwf off
             {
-                fsi.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT = true;
+                LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, true);
             } else
             {
-                fsi.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT = false;
+                LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, false);
             }
 
+            //apu gen light on -> no gnd power, no eng power, no apu power
+            if (fsi.SLI_APU_GEN_RTL && !apu_gen1 && !apu_gen2 && //APU Gen available and gens off
+                !(fsi.IOS_GRD_PWR_CONNECTED && fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH) && //GND PWR off
+                !(fsi.SLI_GEN_1_RTL && eng1_gen) && //ENG 1 Pwr off
+                !(fsi.SLI_GEN_2_RTL && eng2_gen)) //eng 2 pwr off
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_APU_GEN_OFF_BUS_LIGHT, true);
+            } else
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_APU_GEN_OFF_BUS_LIGHT, false);
+            }
+
+            //engine 1 GEN BUS OFF light
+            if (eng1_gen && fsi.SLI_GEN_1_RTL)
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_GEN_OFF_BUS_LIGHT, false);
+            } else
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_GEN_OFF_BUS_LIGHT, true);
+            }
+
+            //engine 2 GEN BUS OFF light
+            if (eng2_gen && fsi.SLI_GEN_2_RTL)
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_GEN_OFF_BUS_LIGHT, false);
+            }
+            else
+            {
+                LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_GEN_OFF_BUS_LIGHT, true);
+            }
+
+            //AC Systems Power (heavy load systems e.g. displays)
+            if ((fsi.IOS_GRD_PWR_CONNECTED && fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH) || //GND PWR ON
+                (fsi.SLI_APU_GEN_RTL && (apu_gen1 || apu_gen2)) || //APU Gen On
+                (fsi.SLI_GEN_1_RTL && eng1_gen) ||  //ENG 1 GEN ON
+                (fsi.SLI_GEN_2_RTL && eng2_gen))    //ENG 2 GEN ON
+            {
+                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 110;
+
+                //displays on
+                switchACSystems(true);
+            } else
+            {
+                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 0;
+
+                //displays off
+                switchACSystems(false);
+            }
+
+
+            //DC Systems Power (Most important systems e.g. warning leds)
+            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH || //battery
+                (fsi.IOS_GRD_PWR_CONNECTED && fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH) || //GND PWR ON
+                (fsi.SLI_APU_GEN_RTL && (apu_gen1 || apu_gen2)) || //APU Gen On
+                (fsi.SLI_GEN_1_RTL && eng1_gen) ||  //ENG 1 GEN ON
+                (fsi.SLI_GEN_2_RTL && eng2_gen))    //ENG 2 GEN ON
+            {
+                fsi.SLI_BAT_BUS_VOLTAGE = 24;
+                switchDCSystems(true);
+            } else
+            {
+                fsi.SLI_BAT_BUS_VOLTAGE = 0;
+                switchDCSystems(false);
+            }
+
+            
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
+        }
+
+
+        //switch AC Systems on / Off
+        private static void switchACSystems(bool power)
+        {
+            fsi.INT_POWER_EICAS = power;
+            fsi.INT_POWER_ISFD = power;
+            fsi.INT_POWER_LDU = power;
+            fsi.INT_POWER_ND_CPT = power;
+            fsi.INT_POWER_ND_FO = power;
+            fsi.INT_POWER_PFD_CPT = power;
+            fsi.INT_POWER_PFD_FO = power;
+            fsi.INT_POWER_SRMI = power;
+        }
+
+        private static void switchDCSystems(bool power)
+        {
+            fsi.CPF_MCP_POWER = power;
         }
     }
 }

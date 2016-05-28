@@ -10,12 +10,14 @@ namespace Overheadpanel
     class Program
     {
         private static TimerManager timerManager;
+        private static LightController lightController;
 
         static void Main(string[] args)
         {
             //enabling timer manager
             timerManager = new TimerManager();
-
+            lightController = new FSToolbox.LightController();
+            
             //starting all the overhead progeams
             IRS irs = new IRS();
             ELT elt = new ELT();
@@ -25,8 +27,8 @@ namespace Overheadpanel
             HYDRAULICS hydraulics = new HYDRAULICS();
             ELEC elec = new ELEC();
             FUEL fuel = new FUEL();
-            
-            while(true)
+
+            while (true)
             {
                 System.Threading.Thread.Sleep(100);
             }

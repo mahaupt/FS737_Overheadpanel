@@ -40,9 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LightController.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="TimerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Desktop\FS737\SDK\CS\Components_CS\FSInterface.csproj">
+      <Project>{08269f5e-6465-4643-8dec-5bee084e1c44}</Project>
+      <Name>FSInterface</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
