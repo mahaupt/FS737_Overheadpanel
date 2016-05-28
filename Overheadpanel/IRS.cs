@@ -8,14 +8,16 @@ using FSToolbox;
 
 namespace Overheadpanel
 {
-    class IRS
+    class IRS : Panel
     {
         private static FSIClient fsi;
-        private static bool is_debug = true;
         private static Timer timer_l_align, timer_l_dc_on, timer_r_align, timer_r_dc_on;
 
         public IRS ()
         {
+            //debug variable
+            is_debug = true;
+
             //starting FSI Client for IRS
             fsi = new FSIClient("Overhead IRS");
             fsi.OnVarReceiveEvent += fsiOnVarReceive;
@@ -171,16 +173,6 @@ namespace Overheadpanel
             debug("IRS R DC Off");
             fsi.MBI_IRS_CONTROL_R_ON_DC_LIGHT = false;
             fsi.ProcessWrites();
-        }
-
-
-
-        private static void debug(String str)
-        {
-            if (is_debug)
-            {
-                Console.WriteLine(str);
-            }
         }
     }
 }

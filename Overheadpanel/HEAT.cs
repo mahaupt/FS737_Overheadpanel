@@ -7,13 +7,15 @@ using FSInterface;
 
 namespace Overheadpanel
 {
-    class HEAT
+    class HEAT : Panel
     {
         private static FSIClient fsi;
-        private static bool is_debug = true;
 
         public HEAT()
         {
+            //debug variable
+            is_debug = true;
+
             //starting FSI Client for IRS
             fsi = new FSIClient("Overhead HEAT");
             fsi.OnVarReceiveEvent += fsiOnVarReceive;
@@ -147,14 +149,7 @@ namespace Overheadpanel
                 //set lights
                 fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT = fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH;
                 fsi.ProcessWrites();
-            }
-        }
-
-        private static void debug(String str)
-        {
-            if (is_debug)
-            {
-                Console.WriteLine(str);
+                
             }
         }
     }

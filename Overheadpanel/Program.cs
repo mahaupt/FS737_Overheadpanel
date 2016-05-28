@@ -21,6 +21,8 @@ namespace Overheadpanel
             ELT elt = new ELT();
             OXY oxy = new OXY();
             HEAT heat = new HEAT();
+            ANTIICE antiice = new ANTIICE();
+            HYDRAULICS hydraulics = new HYDRAULICS();
             
             while(true)
             {

@@ -7,13 +7,15 @@ using FSInterface;
 
 namespace Overheadpanel
 {
-    class OXY
+    class OXY : Panel
     {
         private static FSIClient fsi;
-        private static bool is_debug = true;
 
         public OXY()
         {
+            //debug variable
+            is_debug = true;
+
             //starting FSI Client for IRS
             fsi = new FSIClient("Overhead OXY");
             fsi.OnVarReceiveEvent += fsiOnVarReceive;
@@ -46,14 +48,6 @@ namespace Overheadpanel
 
                 fsi.MBI_OXYGEN_PASS_OXY_LIGHT = false;
                 fsi.ProcessWrites();
-            }
-        }
-
-        private static void debug(String str)
-        {
-            if (is_debug)
-            {
-                Console.WriteLine(str);
             }
         }
     }

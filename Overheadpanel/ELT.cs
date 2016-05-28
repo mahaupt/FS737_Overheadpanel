@@ -7,13 +7,15 @@ using FSInterface;
 
 namespace Overheadpanel
 {
-    class ELT
+    class ELT : Panel
     {
         private static FSIClient fsi;
-        private static bool is_debug = true;
 
         public ELT()
         {
+            //debug variable
+            is_debug = true;
+
             //starting FSI Client for IRS
             fsi = new FSIClient("Overhead ELT");
             fsi.OnVarReceiveEvent += fsiOnVarReceive;
@@ -46,14 +48,6 @@ namespace Overheadpanel
 
                 fsi.MBI_ELT_ACTIVE_LIGHT = false;
                 fsi.ProcessWrites();
-            }
-        }
-
-        private static void debug(String str)
-        {
-            if (is_debug)
-            {
-                Console.WriteLine(str);
             }
         }
     }

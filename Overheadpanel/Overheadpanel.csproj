@@ -43,10 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ANTIICE.cs" />
     <Compile Include="ELT.cs" />
     <Compile Include="HEAT.cs" />
+    <Compile Include="HYDRAULICS.cs" />
     <Compile Include="IRS.cs" />
     <Compile Include="OXY.cs" />
+    <Compile Include="Panel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
