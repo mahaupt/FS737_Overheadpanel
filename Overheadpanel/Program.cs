@@ -30,6 +30,9 @@ namespace Overheadpanel
             AIRCOND aircond = new AIRCOND();
             PNEUMATICS pneumatics = new PNEUMATICS();
             TPANEL tpanel = new TPANEL();
+            DOORS doors = new DOORS();
+            ENGINEECC engineecc = new ENGINEECC();
+            FRECSTALLTEST frecstalltest = new FRECSTALLTEST();
 
             while (true)
             {

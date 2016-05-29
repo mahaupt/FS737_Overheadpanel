@@ -389,10 +389,10 @@ namespace Overheadpanel
             //all status lights
             if (power)
             {
-                LightController.setLightStatus(1);
+                LightController.setLightPower(true);
             } else
             {
-                LightController.setLightStatus(0);
+                LightController.setLightPower(false);
             }
         }
     }

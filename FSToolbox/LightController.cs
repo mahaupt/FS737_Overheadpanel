@@ -19,7 +19,8 @@ namespace FSToolbox
     public class LightController
     {
         private static bool lights_brightness = true; //1: bright, 0: dimmed
-        private static int lights_status = 1; //0: all_out, 1: normal, 2: all_on
+        private static bool lights_power = true; //1: power on, 0: power off
+        private static bool lights_test = false; //0: normal, : all lights on
 
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
@@ -57,7 +58,7 @@ namespace FSToolbox
 
             //set the light value
             lightsList[id].set(value);
-            lightsList[id].writeStatus(lights_status, lights_brightness, ref fsi);
+            lightsList[id].writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
         }
 
 
@@ -70,13 +71,19 @@ namespace FSToolbox
         {
             foreach(KeyValuePair<FSIID, LightControllerLight> light in lightsList)
             {
-                light.Value.writeStatus(lights_status, lights_brightness, ref fsi);
+                light.Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
             }
         }
 
-        public static void setLightStatus(int _light_status)
+        public static void setLightPower(bool _light_power)
         {
-            lights_status = _light_status;
+            lights_power = _light_power;
+            updateAll();
+        }
+
+        public static void setLightTest(bool _light_test)
+        {
+            lights_test = _light_test;
             updateAll();
         }
 
@@ -118,9 +125,9 @@ namespace FSToolbox
         }
 
         //get if the light is on or off
-        public bool get(int main_light_status)
+        public bool get(bool main_light_power, bool lights_test)
         {
-            if (main_light_status == 1)
+            if (main_light_power)
             {
                 switch (light_status)
                 {
@@ -128,13 +135,12 @@ namespace FSToolbox
                     default:
                         return false;
                     case (1):
+                        if (lights_test)
+                            return true;
                         return light_on;
                     case (2):
                         return true;
                 }
-            } else if (main_light_status == 2)
-            {
-                return true;
             } else
             {
                 return false;
@@ -143,9 +149,9 @@ namespace FSToolbox
         }
 
 
-        public void writeStatus(int main_light_status, bool light_brightness, ref FSIClient fsi_object)
+        public void writeStatus(bool main_lights_power, bool lights_test, bool light_brightness, ref FSIClient fsi_object)
         {
-            bool true_light_status = get(main_light_status);
+            bool true_light_status = get(main_lights_power, lights_test);
 
             //write light status
             if (!is_dimmable)

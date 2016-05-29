@@ -45,8 +45,11 @@
   <ItemGroup>
     <Compile Include="AIRCOND.cs" />
     <Compile Include="ANTIICE.cs" />
+    <Compile Include="DOORS.cs" />
     <Compile Include="ELEC.cs" />
     <Compile Include="ELT.cs" />
+    <Compile Include="ENGINEECC.cs" />
+    <Compile Include="FRECSTALLTEST.cs" />
     <Compile Include="FUEL.cs" />
     <Compile Include="HEAT.cs" />
     <Compile Include="HYDRAULICS.cs" />
