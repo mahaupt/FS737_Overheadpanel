@@ -21,7 +21,7 @@ namespace FSToolbox
         private static bool lights_brightness = true; //1: bright, 0: dimmed
         private static bool lights_power = true; //1: power on, 0: power off
         private static bool lights_test = false; //0: normal, : all lights on
-
+        protected static bool is_debug = true;
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
         private static FSIClient fsi;
@@ -30,6 +30,41 @@ namespace FSToolbox
         {
             fsi = new FSIClient("Light Controller");
             lightsList = new Dictionary<FSIID, LightControllerLight>();
+
+            fsi.OnVarReceiveEvent += fsiOnVarReceive;
+            fsi.DeclareAsWanted(new FSIID[]
+                {
+                    FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS,
+                    FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS
+                }
+            );
+
+            fsi.ProcessWrites();
+        }
+
+
+        public static void fsiOnVarReceive(FSIID id)
+        {
+            if (id ==FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS || id == FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
+            {
+                if (fsi.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS)
+                {
+                    debug("MIP Lights Dim");
+                    setLightBrightness(false);
+                    setLightTest(false);
+                } else if (fsi.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
+                {
+                    debug("MIP Lights Test");
+                    setLightBrightness(true);
+                    setLightTest(true);
+                } else
+                {
+                    debug("MIP Lights Norm");
+                    setLightTest(false);
+                    setLightBrightness(true);
+                }
+                ProcessWrites();
+            }
         }
 
         //set a light value
@@ -53,7 +88,6 @@ namespace FSToolbox
                     Console.WriteLine("ERROR: LightController: Too many Lights found for name: " + name);
                     return;
                 }
-
             }
 
             //set the light value
@@ -91,6 +125,14 @@ namespace FSToolbox
         { 
             lights_brightness = _lights_brightness;
             updateAll();
+        }
+
+        protected static void debug(String str)
+        {
+            if (is_debug)
+            {
+                Console.WriteLine(str);
+            }
         }
     }
 
