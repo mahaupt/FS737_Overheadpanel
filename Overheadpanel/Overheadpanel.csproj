@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIRCOND.cs" />
     <Compile Include="ANTIICE.cs" />
     <Compile Include="ELEC.cs" />
     <Compile Include="ELT.cs" />
@@ -52,8 +53,10 @@
     <Compile Include="IRS.cs" />
     <Compile Include="OXY.cs" />
     <Compile Include="Panel.cs" />
+    <Compile Include="PNEUMATICS.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TPANEL.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

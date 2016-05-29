@@ -27,6 +27,9 @@ namespace Overheadpanel
             HYDRAULICS hydraulics = new HYDRAULICS();
             ELEC elec = new ELEC();
             FUEL fuel = new FUEL();
+            AIRCOND aircond = new AIRCOND();
+            PNEUMATICS pneumatics = new PNEUMATICS();
+            TPANEL tpanel = new TPANEL();
 
             while (true)
             {
