@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -26,28 +27,29 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_ELT_ACTIVE_LIGHT = false;
+            LightController.set(FSIID.MBI_ELT_ACTIVE_LIGHT, false);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
         static void fsiOnVarReceive(FSIID id)
         {
-            if (id == FSIID.MBI_ELT_ARM_SWITCH && fsi.MBI_ELT_ARM_SWITCH == false)
+            if (id == FSIID.MBI_ELT_ARM_SWITCH)
             {
-                debug("ELT On");
+                if (!fsi.MBI_ELT_ARM_SWITCH)
+                {
+                    debug("ELT On");
+                } else
+                {
+                    debug("ELT Arm");
+                }
+                
 
                 //ELT light
-                fsi.MBI_ELT_ACTIVE_LIGHT = true;
-                fsi.ProcessWrites();
-            }
-            if (id == FSIID.MBI_ELT_ARM_SWITCH && fsi.MBI_ELT_ARM_SWITCH == true)
-            {
-                debug("ELT Arm");
-
-                fsi.MBI_ELT_ACTIVE_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ELT_ACTIVE_LIGHT, !fsi.MBI_ELT_ARM_SWITCH);
+                LightController.ProcessWrites();
             }
         }
     }

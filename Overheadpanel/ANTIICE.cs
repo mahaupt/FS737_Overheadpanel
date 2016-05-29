@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -28,14 +29,15 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT = false;
-            fsi.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT = false;
-            fsi.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT = false;
-            fsi.MBI_ANTI_ICE_ENG_2_COWL_ANTI_ICE_LIGHT = false;
-            fsi.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT = false;
-            fsi.MBI_ANTI_ICE_ENG_1_COWL_ANTI_ICE_LIGHT = false;
+            LightController.set(FSIID.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT, false);
+            LightController.set(FSIID.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT, false);
+            LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT, false);
+            LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_ANTI_ICE_LIGHT, false);
+            LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, false);
+            LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_ANTI_ICE_LIGHT, false);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
@@ -47,17 +49,17 @@ namespace Overheadpanel
             {
                 debug("ANTI_ICE Wing On");
 
-                fsi.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT = true;
-                fsi.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT, true);
+                LightController.set(FSIID.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT, true);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE Wing Off");
 
-                fsi.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT = false;
-                fsi.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_WING_L_VALVE_OPEN_LIGHT, false);
+                LightController.set(FSIID.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT, false);
+                LightController.ProcessWrites();
             }
 
 
@@ -66,15 +68,15 @@ namespace Overheadpanel
             {
                 debug("ANTI_ICE ENG 1 On");
 
-                fsi.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, true);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 1 Off");
 
-                fsi.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, false);
+                LightController.ProcessWrites();
             }
 
 
@@ -83,15 +85,15 @@ namespace Overheadpanel
             {
                 debug("ANTI_ICE ENG 2 On");
 
-                fsi.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT, true);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 2 Off");
 
-                fsi.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT, false);
+                LightController.ProcessWrites();
             }
         }
         

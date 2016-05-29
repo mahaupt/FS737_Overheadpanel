@@ -79,6 +79,12 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ELEC_BUS_APU_GEN_OFF_BUS_LIGHT, false);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_GEN_OFF_BUS_LIGHT, true);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_GEN_OFF_BUS_LIGHT, true);
+            LightController.set(FSIID.MBI_ELEC_IND_ELEC_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_IND_TR_UNIT_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_SOURCE_OFF_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, false);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_SOURCE_OFF_LIGHT, false);
 
             fsi.ProcessWrites();
             LightController.ProcessWrites();
@@ -379,6 +385,15 @@ namespace Overheadpanel
         private static void switchDCSystems(bool power)
         {
             fsi.CPF_MCP_POWER = power;
+
+            //all status lights
+            if (power)
+            {
+                LightController.setLightStatus(1);
+            } else
+            {
+                LightController.setLightStatus(0);
+            }
         }
     }
 }

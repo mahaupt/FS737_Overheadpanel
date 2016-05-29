@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -29,14 +30,15 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT = true;
-            fsi.MBI_HYDRAULICS_ELEC_1_OVERHEAT_LIGHT = false;
-            fsi.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT = true;
-            fsi.MBI_HYDRAULICS_ELEC_2_OVERHEAT_LIGHT = false;
-            fsi.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT = true;
-            fsi.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT = true;
+            LightController.set(FSIID.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_HYDRAULICS_ELEC_1_OVERHEAT_LIGHT, false);
+            LightController.set(FSIID.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_HYDRAULICS_ELEC_2_OVERHEAT_LIGHT, false);
+            LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, true);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
@@ -48,16 +50,16 @@ namespace Overheadpanel
                 debug("HYDRAULICS ELEC 1 On");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT, false);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_HYDRAULICS_ELEC_1_SWITCH && fsi.MBI_HYDRAULICS_ELEC_1_SWITCH == false)
             {
                 debug("HYDRAULICS ELEC 1 Off");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT, true);
+                LightController.ProcessWrites();
             }
 
             //ELEC 2
@@ -66,16 +68,16 @@ namespace Overheadpanel
                 debug("HYDRAULICS ELEC 2 On");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT, false);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_HYDRAULICS_ELEC_2_SWITCH && fsi.MBI_HYDRAULICS_ELEC_2_SWITCH == false)
             {
                 debug("HYDRAULICS ELEC 2 Off");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT, true);
+                LightController.ProcessWrites();
             }
 
 
@@ -85,16 +87,16 @@ namespace Overheadpanel
                 debug("HYDRAULICS ENG 1 On");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, false);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_HYDRAULICS_ENG_1_SWITCH && fsi.MBI_HYDRAULICS_ENG_1_SWITCH == false)
             {
                 debug("HYDRAULICS ENG 1 Off");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, true);
+                LightController.ProcessWrites();
             }
 
             //ENG 2
@@ -103,16 +105,16 @@ namespace Overheadpanel
                 debug("HYDRAULICS ENG 2 On");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, false);
+                LightController.ProcessWrites();
             }
             if (id == FSIID.MBI_HYDRAULICS_ENG_2_SWITCH && fsi.MBI_HYDRAULICS_ENG_2_SWITCH == false)
             {
                 debug("HYDRAULICS ENG 2 Off");
 
                 //ELT light
-                fsi.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, true);
+                LightController.ProcessWrites();
             }
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -26,28 +27,29 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_OXYGEN_PASS_OXY_LIGHT = false;
+            LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, false);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
         static void fsiOnVarReceive(FSIID id)
         {
-            if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH && fsi.MBI_OXYGEN_PASS_OXY_SWITCH == false)
+            if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH)
             {
-                debug("OXY Pass ON");
-
+                if (fsi.MBI_OXYGEN_PASS_OXY_SWITCH == false)
+                {
+                    debug("OXY Pass ON");
+                }
+                else
+                {
+                    debug("OXY Pass NORM");
+                }
+                
                 //ELT light
-                fsi.MBI_OXYGEN_PASS_OXY_LIGHT = true;
-                fsi.ProcessWrites();
-            }
-            if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH && fsi.MBI_OXYGEN_PASS_OXY_SWITCH == true)
-            {
-                debug("OXY Pass NORM");
-
-                fsi.MBI_OXYGEN_PASS_OXY_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, !fsi.MBI_OXYGEN_PASS_OXY_SWITCH);
+                LightController.ProcessWrites();
             }
         }
     }

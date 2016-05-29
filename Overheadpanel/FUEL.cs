@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -32,8 +33,22 @@ namespace Overheadpanel
             );
 
             //standard values
+            LightController.set(FSIID.MBI_FUEL_CROSSFEED_VALVE_OPEN_LIGHT, false);
+            LightController.set(FSIID.MBI_FUEL_CTR_LEFT_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_CTR_RIGHT_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_LEFT_AFT_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_LEFT_ENG_VALVE_CLOSED_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_LEFT_FILTER_BYPASS_LIGHT, false);
+            LightController.set(FSIID.MBI_FUEL_LEFT_FWD_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_LEFT_SPAR_VALVE_CLOSED_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_RIGHT_AFT_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_RIGHT_ENG_VALVE_CLOSED_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_RIGHT_FILTER_BYPASS_LIGHT, false);
+            LightController.set(FSIID.MBI_FUEL_RIGHT_FWD_PUMP_LOW_PRESSURE_LIGHT, true);
+            LightController.set(FSIID.MBI_FUEL_RIGHT_SPAR_VALVE_CLOSED_LIGHT, true);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
@@ -51,8 +66,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_CROSSFEED_VALVE_OPEN_LIGHT = fsi.MBI_FUEL_CROSSFEED_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_CROSSFEED_VALVE_OPEN_LIGHT, fsi.MBI_FUEL_CROSSFEED_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //FUEL CTR L
@@ -68,7 +83,7 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_CTR_LEFT_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_CTR_LEFT_PUMP_SWITCH;
+                LightController.set(FSIID.MBI_FUEL_CTR_LEFT_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_CTR_LEFT_PUMP_SWITCH);
                 fsi.ProcessWrites();
             }
 
@@ -85,8 +100,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_CTR_RIGHT_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_CTR_RIGHT_PUMP_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_CTR_RIGHT_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_CTR_RIGHT_PUMP_SWITCH);
+                LightController.ProcessWrites();
             }
 
 
@@ -103,8 +118,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_LEFT_AFT_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_LEFT_AFT_PUMP_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_LEFT_AFT_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_LEFT_AFT_PUMP_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //FUEL AFT R
@@ -120,8 +135,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_RIGHT_AFT_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_RIGHT_AFT_PUMP_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_RIGHT_AFT_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_RIGHT_AFT_PUMP_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //FUEL FWD L
@@ -137,8 +152,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_LEFT_FWD_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_LEFT_FWD_PUMP_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_LEFT_FWD_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_LEFT_FWD_PUMP_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //FUEL FWD R
@@ -154,8 +169,8 @@ namespace Overheadpanel
                 }
 
                 //ELT light
-                fsi.MBI_FUEL_RIGHT_FWD_PUMP_LOW_PRESSURE_LIGHT = fsi.MBI_FUEL_RIGHT_FWD_PUMP_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_FUEL_RIGHT_FWD_PUMP_LOW_PRESSURE_LIGHT, fsi.MBI_FUEL_RIGHT_FWD_PUMP_SWITCH);
+                LightController.ProcessWrites();
             }
         }
     }

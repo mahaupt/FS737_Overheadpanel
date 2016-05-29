@@ -33,19 +33,20 @@ namespace Overheadpanel
                     FSIID.MBI_IRS_CONTROL_R_MODE_SWITCH_ALIGN_POS
                 }
             );
-            
+
             //set Lights on the beginning
-            fsi.MBI_IRS_CONTROL_L_DC_FAIL_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_L_ON_DC_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_L_FAULT_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_L_ALIGN_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_R_DC_FAIL_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_R_ON_DC_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_R_FAULT_LIGHT = false;
-            fsi.MBI_IRS_CONTROL_R_ALIGN_LIGHT = false;
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_DC_FAIL_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_FAULT_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_DC_FAIL_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_FAULT_LIGHT, false);
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
 
             //send Settings to Server
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
 
             //create IRS Timer
             timer_l_align = new Timer(12 * 60, callbackIRS_L_Align);
@@ -67,12 +68,10 @@ namespace Overheadpanel
                 debug("IRS L OFF");
 
                 //lights
-                fsi.MBI_IRS_CONTROL_L_DC_FAIL_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_L_ON_DC_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_L_FAULT_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_L_ALIGN_LIGHT = false;
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
 
-                fsi.ProcessWrites();
+                LightController.ProcessWrites();
 
                 //stop timers
                 timer_l_align.Reset();
@@ -83,9 +82,9 @@ namespace Overheadpanel
                 debug("IRS L ALIGN");
 
                 //lights
-                fsi.MBI_IRS_CONTROL_L_ALIGN_LIGHT = true;
-                fsi.MBI_IRS_CONTROL_L_ON_DC_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, true);
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, true);
+                LightController.ProcessWrites();
 
                 //start aligning timers
                 timer_l_align.Start();
@@ -108,12 +107,10 @@ namespace Overheadpanel
                 debug("IRS R OFF");
 
                 //lights
-                fsi.MBI_IRS_CONTROL_R_DC_FAIL_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_R_ON_DC_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_R_FAULT_LIGHT = false;
-                fsi.MBI_IRS_CONTROL_R_ALIGN_LIGHT = false;
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
 
-                fsi.ProcessWrites();
+                LightController.ProcessWrites();
 
                 //stop timers
                 timer_r_align.Reset();
@@ -124,9 +121,9 @@ namespace Overheadpanel
                 debug("IRS R ALIGN");
 
                 //lights
-                fsi.MBI_IRS_CONTROL_R_ALIGN_LIGHT = true;
-                fsi.MBI_IRS_CONTROL_R_ON_DC_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, true);
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, true);
+                LightController.ProcessWrites();
 
                 //start aligning timers
                 timer_r_align.Start();
@@ -149,30 +146,30 @@ namespace Overheadpanel
         {
             //finished aligning - light off
             debug("IRS L Align finished");
-            fsi.MBI_IRS_CONTROL_L_ALIGN_LIGHT = false;
-            fsi.ProcessWrites();
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
+            LightController.ProcessWrites();
         }
 
         private static void callbackIRS_R_Align()
         {
             debug("IRS R Align finished");
-            fsi.MBI_IRS_CONTROL_R_ALIGN_LIGHT = false;
-            fsi.ProcessWrites();
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
+            LightController.ProcessWrites();
         }
 
         private static void callbackIRS_L_DC_ON()
         {
             //switching to AC, DC_ON_LIGHT off
             debug("IRS L DC Off");
-            fsi.MBI_IRS_CONTROL_L_ON_DC_LIGHT = false;
-            fsi.ProcessWrites();
+            LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
+            LightController.ProcessWrites();
         }
 
         private static void callbackIRS_R_DC_ON()
         {
             debug("IRS R DC Off");
-            fsi.MBI_IRS_CONTROL_R_ON_DC_LIGHT = false;
-            fsi.ProcessWrites();
+            LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
+            LightController.ProcessWrites();
         }
     }
 }

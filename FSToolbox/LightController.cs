@@ -19,7 +19,7 @@ namespace FSToolbox
     public class LightController
     {
         private static bool lights_brightness = true; //1: bright, 0: dimmed
-        private static int lights_status = 2; //0: all_out, 1: normal, 2: all_on
+        private static int lights_status = 1; //0: all_out, 1: normal, 2: all_on
 
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
@@ -64,6 +64,26 @@ namespace FSToolbox
         public static void ProcessWrites()
         {
             fsi.ProcessWrites();
+        }
+
+        private static void updateAll()
+        {
+            foreach(KeyValuePair<FSIID, LightControllerLight> light in lightsList)
+            {
+                light.Value.writeStatus(lights_status, lights_brightness, ref fsi);
+            }
+        }
+
+        public static void setLightStatus(int _light_status)
+        {
+            lights_status = _light_status;
+            updateAll();
+        }
+
+        public static void setLightBrightness(bool _lights_brightness)
+        { 
+            lights_brightness = _lights_brightness;
+            updateAll();
         }
     }
 

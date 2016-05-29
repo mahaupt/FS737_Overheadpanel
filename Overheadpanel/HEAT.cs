@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FSInterface;
+using FSToolbox;
 
 namespace Overheadpanel
 {
@@ -33,24 +34,25 @@ namespace Overheadpanel
             );
 
             //standard values
-            fsi.MBI_HEAT_AUX_PITOT_LIGHT = true;
-            fsi.MBI_HEAT_CAPT_PITOT_LIGHT = true;
-            fsi.MBI_HEAT_FO_PITOT_LIGHT = true;
-            fsi.MBI_HEAT_L_ALPHA_VANE_LIGHT = true;
-            fsi.MBI_HEAT_L_ELEV_PITOT_LIGHT = true;
-            fsi.MBI_HEAT_R_ALPHA_VANE_LIGHT = true;
-            fsi.MBI_HEAT_R_ELEV_PITOT_LIGHT = true;
-            fsi.MBI_HEAT_TEMP_PROBE_LIGHT = true;
-            fsi.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT = false;
-            fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT = false;
+            LightController.set(FSIID.MBI_HEAT_AUX_PITOT_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_CAPT_PITOT_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_FO_PITOT_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_L_ALPHA_VANE_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_L_ELEV_PITOT_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_R_ALPHA_VANE_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_R_ELEV_PITOT_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_TEMP_PROBE_LIGHT, true);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, false);
+            LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT, false);
 
             fsi.ProcessWrites();
+            LightController.ProcessWrites();
         }
 
 
@@ -62,11 +64,11 @@ namespace Overheadpanel
                 debug("HEAT OVHT TEST On");
 
                 //OVHT tst lights
-                fsi.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT = true;
-                fsi.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT = true;
-                fsi.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT = true;
-                fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT = true;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT, true);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT, true);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT, true);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT, true);
+                LightController.ProcessWrites();
             }
 
             //OVERHEAT TEST OFF
@@ -74,11 +76,11 @@ namespace Overheadpanel
             {
                 debug("HEAT OVHT TEST Off");
 
-                fsi.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT = false;
-                fsi.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT = false;
-                fsi.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT = false;
-                fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT = false;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_OVERHEAT_LIGHT, false);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_OVERHEAT_LIGHT, false);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_OVERHEAT_LIGHT, false);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT, false);
+                LightController.ProcessWrites();
             }
 
             //WND LEFT FWD
@@ -94,8 +96,8 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT = fsi.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT, fsi.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH);
+                LightController.ProcessWrites();
             }
 
 
@@ -112,8 +114,8 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT = fsi.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT, fsi.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH);
+                LightController.ProcessWrites();
             }
 
             //WND RIGHT FWD
@@ -129,8 +131,8 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT = fsi.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT, fsi.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH);
+                LightController.ProcessWrites();
             }
 
 
@@ -147,9 +149,9 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT = fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH;
-                fsi.ProcessWrites();
-                
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH);
+                LightController.ProcessWrites();
+
             }
 
 
@@ -166,11 +168,11 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_L_ALPHA_VANE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
-                fsi.MBI_HEAT_L_ELEV_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
-                fsi.MBI_HEAT_CAPT_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
-                fsi.MBI_HEAT_TEMP_PROBE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_L_ALPHA_VANE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_L_ELEV_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_CAPT_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_TEMP_PROBE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.ProcessWrites();
 
             }
 
@@ -187,11 +189,11 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                fsi.MBI_HEAT_R_ALPHA_VANE_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
-                fsi.MBI_HEAT_R_ELEV_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
-                fsi.MBI_HEAT_FO_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
-                fsi.MBI_HEAT_AUX_PITOT_LIGHT = !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH;
-                fsi.ProcessWrites();
+                LightController.set(FSIID.MBI_HEAT_R_ALPHA_VANE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_R_ELEV_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_FO_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_AUX_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.ProcessWrites();
 
             }
         }
