@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Overheadpanel", "Overheadpanel\Overheadpanel.csproj", "{0288A68C-F799-45F6-980F-1BA5C394AC8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSInterface", "..\..\..\..\Desktop\FS737\SDK\CS\Components_CS\FSInterface.csproj", "{08269F5E-6465-4643-8DEC-5BEE084E1C44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSInterface", "..\..\..\..\..\..\FS737\SDK\CS\Components_CS\FSInterface.csproj", "{08269F5E-6465-4643-8DEC-5BEE084E1C44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSToolbox", "FSToolbox\FSToolbox.csproj", "{5F13F455-439E-4C6E-A436-3A28ACA5B9DE}"
 EndProject
