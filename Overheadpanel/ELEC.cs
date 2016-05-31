@@ -92,6 +92,10 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, false);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_SOURCE_OFF_LIGHT, false);
 
+            fsi.MBI_ELEC_BUS_LAMPTEST = false;
+            fsi.MBI_ELEC_IND_LAMPTEST = false;
+            fsi.MBI_ELEC_STBY_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

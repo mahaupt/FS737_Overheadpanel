@@ -29,6 +29,8 @@ namespace Overheadpanel
             //standard values
             LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, false);
 
+            fsi.MBI_OXYGEN_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

@@ -37,6 +37,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, true);
             LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, true);
 
+            fsi.MBI_HYDRAULICS_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

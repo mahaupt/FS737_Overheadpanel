@@ -51,6 +51,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, false);
             LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT, false);
 
+            fsi.MBI_HEAT_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

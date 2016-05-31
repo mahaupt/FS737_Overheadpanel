@@ -31,6 +31,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_AIR_COND_AFT_CAB_ZONE_TEMP_LIGHT, false);
             LightController.set(FSIID.MBI_AIR_COND_FWD_CAB_ZONE_TEMP_LIGHT, false);
 
+            fsi.MBI_AIR_COND_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

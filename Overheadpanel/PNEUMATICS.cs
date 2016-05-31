@@ -42,6 +42,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_PNEUMATICS_RIGHT_RAM_DOOR_FULL_OPEN_LIGHT, false);
             LightController.set(FSIID.MBI_PNEUMATICS_RIGHT_WING_BODY_OVERHEAT_LIGHT, false);
 
+            fsi.MBI_PNEUMATICS_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

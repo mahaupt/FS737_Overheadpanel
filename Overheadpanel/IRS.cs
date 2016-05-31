@@ -44,6 +44,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_IRS_CONTROL_R_FAULT_LIGHT, false);
             LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
 
+            fsi.MBI_IRS_CONTROL_LAMPTEST = false;
+
             //send Settings to Server
             fsi.ProcessWrites();
             LightController.ProcessWrites();

@@ -29,6 +29,8 @@ namespace Overheadpanel
             //standard values
             LightController.set(FSIID.MBI_ELT_ACTIVE_LIGHT, false);
 
+            fsi.MBI_ELT_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

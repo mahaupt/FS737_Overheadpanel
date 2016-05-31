@@ -36,6 +36,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, false);
             LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_ANTI_ICE_LIGHT, false);
 
+            fsi.MBI_ANTI_ICE_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

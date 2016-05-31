@@ -22,7 +22,7 @@ namespace FSToolbox
         private static bool lights_power = true; //1: power on, 0: power off
         private static bool lights_test = false; //0: normal, : all lights on
         private static bool is_debug = true;
-        private static int value = 0;
+        private static bool updateLocked = true;
 
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
@@ -64,12 +64,8 @@ namespace FSToolbox
                 {
                     
                     debug("MIP Lights Norm");
-                    if (value >= 1)
-                    {
-                        setLightTest(false);
-                        setLightBrightness(true);
-                    }
-                    value++;
+                    setLightTest(false);
+                    setLightBrightness(true);
                 }
                 ProcessWrites();
             }
@@ -111,10 +107,14 @@ namespace FSToolbox
 
         private static void updateAll()
         {
-            for (int i = 0; i < lightsList.Count; i++ )
+            if (!updateLocked)
+            //enure that this is not called until all lights have been added to the lightsList
             {
-                //Variable nicht Thread-Safe! Bei Errors erstmal auf weiter drücken
-                lightsList.ElementAt(i).Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
+                for (int i = 0; i < lightsList.Count; i++)
+                {
+                    //Variable nicht Thread-Safe! Bei Errors erstmal auf weiter drücken
+                    lightsList.ElementAt(i).Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
+                }
             }
         }
 
@@ -142,6 +142,12 @@ namespace FSToolbox
             {
                 Console.WriteLine(str);
             }
+        }
+
+        public static void enableUpdate()
+        {
+            updateLocked = false;
+            updateAll();
         }
     }
 

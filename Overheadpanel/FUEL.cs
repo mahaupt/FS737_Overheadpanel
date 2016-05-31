@@ -47,6 +47,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_FUEL_RIGHT_FWD_PUMP_LOW_PRESSURE_LIGHT, true);
             LightController.set(FSIID.MBI_FUEL_RIGHT_SPAR_VALVE_CLOSED_LIGHT, true);
 
+            fsi.MBI_FUEL_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

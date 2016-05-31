@@ -34,6 +34,9 @@ namespace Overheadpanel
             ENGINEECC engineecc = new ENGINEECC();
             FRECSTALLTEST frecstalltest = new FRECSTALLTEST();
 
+            //enable light control after all lights have been initialized
+            LightController.enableUpdate();
+
             while (true)
             {
                 System.Threading.Thread.Sleep(100);

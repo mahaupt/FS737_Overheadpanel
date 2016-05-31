@@ -33,6 +33,8 @@ namespace Overheadpanel
             //standard values
             LightController.set(FSIID.MBI_FLIGHT_REC_OFF_LIGHT, true);
 
+            fsi.MBI_FLIGHT_REC_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

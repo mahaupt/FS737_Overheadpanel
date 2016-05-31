@@ -38,6 +38,8 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_EEC_ENG_2_EEC_ON_LIGHT, true);
             LightController.set(FSIID.MBI_EEC_ENG_2_REVERSER_LIGHT, false);
 
+            fsi.MBI_EEC_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }

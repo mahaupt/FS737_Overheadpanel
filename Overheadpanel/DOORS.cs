@@ -41,6 +41,7 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_DOOR_RIGHT_AFT_OVERWING_LIGHT, false);
             LightController.set(FSIID.MBI_DOOR_RIGHT_FWD_OVERWING_LIGHT, false);
 
+            fsi.MBI_DOOR_LAMPTEST = false;
 
             fsi.ProcessWrites();
             LightController.ProcessWrites();

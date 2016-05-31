@@ -44,6 +44,9 @@ namespace Overheadpanel
 
             LightController.set(FSIID.MBI_UPPER_T_PSEU_LIGHT, false);
 
+            fsi.MBI_LOWER_T_LAMPTEST = false;
+            fsi.MBI_UPPER_T_LAMPTEST = false;
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }
