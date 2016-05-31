@@ -21,7 +21,9 @@ namespace FSToolbox
         private static bool lights_brightness = true; //1: bright, 0: dimmed
         private static bool lights_power = true; //1: power on, 0: power off
         private static bool lights_test = false; //0: normal, : all lights on
-        protected static bool is_debug = true;
+        private static bool is_debug = true;
+        private static int value = 0;
+
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
         private static FSIClient fsi;
@@ -45,6 +47,7 @@ namespace FSToolbox
 
         public static void fsiOnVarReceive(FSIID id)
         {
+
             if (id ==FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS || id == FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
             {
                 if (fsi.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS)
@@ -59,9 +62,14 @@ namespace FSToolbox
                     setLightTest(true);
                 } else
                 {
+                    
                     debug("MIP Lights Norm");
-                    setLightTest(false);
-                    setLightBrightness(true);
+                    if (value >= 1)
+                    {
+                        setLightTest(false);
+                        setLightBrightness(true);
+                    }
+                    value++;
                 }
                 ProcessWrites();
             }
@@ -103,9 +111,10 @@ namespace FSToolbox
 
         private static void updateAll()
         {
-            foreach(KeyValuePair<FSIID, LightControllerLight> light in lightsList)
+            for (int i = 0; i < lightsList.Count; i++ )
             {
-                light.Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
+                //Variable nicht Thread-Safe! Bei Errors erstmal auf weiter drücken
+                lightsList.ElementAt(i).Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
             }
         }
 
@@ -206,15 +215,15 @@ namespace FSToolbox
             } else
             {
                 //bright
-                if ((true_light_status && light_brightness) != (bool)((PropertyInfo)lightMember).GetValue(fsi_object))
+                if (true_light_status != (bool)((PropertyInfo)lightMember).GetValue(fsi_object))
                 {
-                    ((PropertyInfo)lightMember).SetValue(fsi_object, (true_light_status && light_brightness));
+                    ((PropertyInfo)lightMember).SetValue(fsi_object, true_light_status);
                 }
 
                 //dimmed
-                if ((true_light_status && !light_brightness) != (bool)((PropertyInfo)dimmedLightMember).GetValue(fsi_object))
+                if (!light_brightness != (bool)((PropertyInfo)dimmedLightMember).GetValue(fsi_object))
                 {
-                    ((PropertyInfo)dimmedLightMember).SetValue(fsi_object, (true_light_status && !light_brightness));
+                    ((PropertyInfo)dimmedLightMember).SetValue(fsi_object, !light_brightness);
                 }
             }
 

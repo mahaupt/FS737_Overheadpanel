@@ -45,7 +45,7 @@ namespace Overheadpanel
         {
 
             //WING
-            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE Wing On");
 
@@ -53,7 +53,7 @@ namespace Overheadpanel
                 LightController.set(FSIID.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE Wing Off");
 
@@ -64,14 +64,14 @@ namespace Overheadpanel
 
 
             //ENG 1
-            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 1 On");
 
                 LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE ENG 1 Off");
 
@@ -81,14 +81,14 @@ namespace Overheadpanel
 
 
             //ENG 2
-            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 2 On");
 
                 LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE ENG 2 Off");
 

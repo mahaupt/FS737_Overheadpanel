@@ -49,10 +49,10 @@ namespace Overheadpanel
             LightController.ProcessWrites();
 
             //create IRS Timer
-            timer_l_align = new Timer(12 * 60, callbackIRS_L_Align);
-            timer_r_align = new Timer(12 * 60, callbackIRS_R_Align);
-            timer_l_dc_on = new Timer(5, callbackIRS_L_DC_ON);
-            timer_r_dc_on = new Timer(5, callbackIRS_R_DC_ON);
+            timer_l_align = new Timer(10 * 60, callbackIRS_L_Align);
+            timer_r_align = new Timer(10 * 60, callbackIRS_R_Align);
+            timer_l_dc_on = new Timer(3, callbackIRS_L_DC_ON);
+            timer_r_dc_on = new Timer(3, callbackIRS_R_DC_ON);
             TimerManager.addTimer(timer_l_align);
             TimerManager.addTimer(timer_r_align);
             TimerManager.addTimer(timer_l_dc_on);

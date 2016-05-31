@@ -70,6 +70,12 @@ namespace Overheadpanel
                 }
             );
 
+            //GND PWR. APU, ENG GEN testweise alle auf ON
+            fsi.SLI_APU_GEN_RTL = true;
+            fsi.IOS_GRD_PWR_CONNECTED = true;
+            fsi.SLI_GEN_1_RTL = true;
+            fsi.SLI_GEN_2_RTL = true;
+
             //standard values
             LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, false);
             LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, false);

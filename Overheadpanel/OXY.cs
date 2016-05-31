@@ -38,7 +38,7 @@ namespace Overheadpanel
         {
             if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH)
             {
-                if (fsi.MBI_OXYGEN_PASS_OXY_SWITCH == false)
+                if (fsi.MBI_OXYGEN_PASS_OXY_SWITCH == true)
                 {
                     debug("OXY Pass ON");
                 }
@@ -48,7 +48,7 @@ namespace Overheadpanel
                 }
                 
                 //ELT light
-                LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, !fsi.MBI_OXYGEN_PASS_OXY_SWITCH);
+                LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, fsi.MBI_OXYGEN_PASS_OXY_SWITCH);
                 LightController.ProcessWrites();
             }
         }
