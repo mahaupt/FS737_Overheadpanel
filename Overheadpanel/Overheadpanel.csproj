@@ -68,7 +68,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Desktop\FS737\SDK\CS\Components_CS\FSInterface.csproj">
+    <ProjectReference Include="..\..\..\..\..\..\..\FS737\SDK\CS\Components_CS\FSInterface.csproj">
       <Project>{08269f5e-6465-4643-8dec-5bee084e1c44}</Project>
       <Name>FSInterface</Name>
     </ProjectReference>
