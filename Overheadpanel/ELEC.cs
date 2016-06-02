@@ -14,14 +14,15 @@ namespace Overheadpanel
         private static bool bustransfer_auto = true;
         private static AC_Powersource eng1_gen = new AC_Powersource();
         private static AC_Powersource eng2_gen = new AC_Powersource();
-        private static AC_Powersource ext_pwr = new AC_Powersource();
+        private static AC_Powersource ext_pwr_l = new AC_Powersource();
+        private static AC_Powersource ext_pwr_r = new AC_Powersource();
         private static AC_Powersource apu_gen1 = new AC_Powersource();
         private static AC_Powersource apu_gen2 = new AC_Powersource();
         public static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
         private static IDG idg1 = new IDG(eng1_gen);
         private static IDG idg2 = new IDG(eng2_gen);
-        private static AC_BUS ac_bus1 = new AC_BUS(disconnected);
-        private static AC_BUS ac_bus2 = new AC_BUS(disconnected);
+        private static AC_BUS ac_bus1 = new AC_BUS();
+        private static AC_BUS ac_bus2 = new AC_BUS();
         
 
         public ELEC()
@@ -109,6 +110,8 @@ namespace Overheadpanel
 
             fsi.ProcessWrites();
             LightController.ProcessWrites();
+
+            simElectrics();
         }
 
 
@@ -121,15 +124,17 @@ namespace Overheadpanel
                 if (fsi.IOS_GRD_PWR_CONNECTED)
                 {
                     debug("ELEC GND PWR Connected");
-                    ext_pwr.Available();
+                    ext_pwr_l.Available();
+                    ext_pwr_r.Available();
                 } else
                 {
                     debug("ELEC GND PWR Disconnected");
-                    ext_pwr.Unavailable();
+                    ext_pwr_l.Unavailable();
+                    ext_pwr_r.Available();
                 }
 
                 //GND PWR available
-                LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, ext_pwr.isAvailable);
+                LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, fsi.IOS_GRD_PWR_CONNECTED);
                 simElectrics();
             }
 
@@ -139,14 +144,14 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH)
                 {
                     debug("ELEC GND PWR SWITCH On");
-                    ext_pwr.SwitchOn();
-                    ac_bus1.connect(ext_pwr);
-                    ac_bus2.connect(ext_pwr);                    
+                    if (ext_pwr_l.SwitchOn()) ac_bus1.select(ext_pwr_l);
+                    if (ext_pwr_r.SwitchOn()) ac_bus2.select(ext_pwr_r);
                 }
                 else
                 {
                     debug("ELEC GND PWR SWITCH Off");
-                    ext_pwr.SwitchOff();
+                    ext_pwr_l.SwitchOff();
+                    ext_pwr_r.SwitchOff();
                 }
                 simElectrics();
             }
@@ -227,7 +232,12 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_APU_GEN_1_SWITCH_ON_POS)
                 {
                     debug("ELEC APU GEN 1 On");
-                    if(apu_gen1.SwitchOn()) ac_bus1.connect(apu_gen1);
+                    if (apu_gen1.SwitchOn())
+                    {
+                        ac_bus1.select(apu_gen1);
+                        ext_pwr_l.SwitchOff();
+                        ext_pwr_r.SwitchOff();
+                    }
                 }
                 simElectrics();
             }
@@ -243,8 +253,14 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_APU_GEN_2_SWITCH_ON_POS)
                 {
                     debug("ELEC APU GEN 2 On");
-                    if(apu_gen2.SwitchOn()) ac_bus2.connect(apu_gen2);
+                    if (apu_gen2.SwitchOn())
+                    {
+                        ac_bus2.select(apu_gen2);
+                        ext_pwr_l.SwitchOff();
+                        ext_pwr_r.SwitchOff();
+                    }
                 }
+                    
                 simElectrics();
             }
 
@@ -259,7 +275,7 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_GEN_1_SWITCH_ON_POS)
                 {
                     debug("ELEC ENG GEN 1 On");
-                    if(eng1_gen.SwitchOn()) ac_bus1.connect(eng1_gen);
+                    if(eng1_gen.SwitchOn()) ac_bus1.select(eng1_gen);
                 }
                 simElectrics();
             }
@@ -275,7 +291,7 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_BUS_GEN_2_SWITCH_ON_POS)
                 {
                     debug("ELEC ENG GEN 2 On");
-                    if (eng2_gen.SwitchOn()) ac_bus2.connect(eng2_gen);
+                    if (eng2_gen.SwitchOn()) ac_bus2.select(eng2_gen);
                 }
                 simElectrics();
             }
@@ -358,30 +374,17 @@ namespace Overheadpanel
                 if(!ac_bus1.isPowered)
                 {
                     ac_bus1.connect(ac_bus2.powersource);
-                    if (ac_bus1.powersource == ext_pwr) ac_bus1.sourceOff = false;
-                    else if (ac_bus1.powersource == eng1_gen) ac_bus1.sourceOff = false;
-                    else if (ac_bus1.powersource == apu_gen1) ac_bus1.sourceOff = false;
-                    else if (ac_bus1.powersource == eng2_gen) ac_bus1.sourceOff = true;
-                    else if (ac_bus1.powersource == apu_gen2) ac_bus1.sourceOff = true;
-                    else ac_bus1.sourceOff = true;
-
                 }
                 if(!ac_bus2.isPowered)
                 {
                     ac_bus2.connect(ac_bus1.powersource);
-                    if (ac_bus2.powersource == ext_pwr) ac_bus1.sourceOff = false;
-                    else if (ac_bus2.powersource == eng2_gen) ac_bus1.sourceOff = false;
-                    else if (ac_bus2.powersource == apu_gen2) ac_bus1.sourceOff = false;
-                    else if (ac_bus2.powersource == eng1_gen) ac_bus1.sourceOff = true;
-                    else if (ac_bus2.powersource == apu_gen1) ac_bus1.sourceOff = true;
-                    else ac_bus2.sourceOff = true;
                 }
             }
 
             // Set LEDs for Busses
-            LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, ac_bus1.isPowered);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, !ac_bus1.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_SOURCE_OFF_LIGHT, ac_bus1.sourceOff);
-            LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, ac_bus2.isPowered);
+            LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, !ac_bus2.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_SOURCE_OFF_LIGHT, ac_bus2.sourceOff);
 
             //BAT DISCHARGE LIGHT
@@ -526,27 +529,35 @@ namespace Overheadpanel
 
     public class AC_BUS
     {
-        public AC_BUS(AC_Powersource assign_powersource)    // constructor for AC_BUS with default disconnected powersource "disconnect" (see init)
-        {
-            powersource = assign_powersource;
-        }
-
         public bool isPowered = false, sourceOff = true;
-        public AC_Powersource powersource;
+        public AC_Powersource powersource = ELEC.disconnected, selected_source = ELEC.disconnected;
 
         public void connect(AC_Powersource new_powersource)
-        {           
-            powersource = new_powersource;
-            if (powersource.isOnline)
-            {
-                isPowered = true;                
+        {                      
+            if (new_powersource.isAvailable)
+            {                
+                powersource = new_powersource;
+                isPowered = true;
+                if (powersource != selected_source) sourceOff = true;
+                else sourceOff = false;
             }
         }
         public void disconnect()
-        {
+        {            
             powersource = ELEC.disconnected;
+            sourceOff = false;
             isPowered = false;
         }
+
+        public void select(AC_Powersource new_source)
+        {
+            if (new_source.isAvailable)
+            {
+                if (powersource == selected_source) selected_source.SwitchOff();
+                selected_source = new_source;
+                connect(new_source);
+            }
+        }               
     }
 
     public class AC_Powersource
