@@ -380,12 +380,21 @@ namespace Overheadpanel
                     ac_bus2.connect(ac_bus1.powersource);
                 }
             }
+            else
+            {
+                if (ac_bus1.powersource != ac_bus1.selected_source) ac_bus1.disconnect();
+                if (ac_bus2.powersource != ac_bus2.selected_source) ac_bus2.disconnect();
+            }
 
             // Set LEDs for Busses
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, !ac_bus1.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_SOURCE_OFF_LIGHT, ac_bus1.sourceOff);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, !ac_bus2.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_SOURCE_OFF_LIGHT, ac_bus2.sourceOff);
+
+            // Set LEDs of IDGs
+            LightController.set(FSIID.MBI_ELEC_STBY_GEN_1_DRIVE_LIGHT, !eng1_gen.isAvailable);
+            LightController.set(FSIID.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT, !eng2_gen.isAvailable);
 
             //BAT DISCHARGE LIGHT
             if (fsi.MBI_ELEC_IND_BATTERY_SWITCH && !ac_bus1.isPowered && !ac_bus2.isPowered)
@@ -537,7 +546,7 @@ namespace Overheadpanel
             if (new_powersource.isAvailable)
             {                
                 powersource = new_powersource;
-                isPowered = true;
+                isPowered = powersource.SwitchOn();
                 if (powersource != selected_source) sourceOff = true;
                 else sourceOff = false;
             }
