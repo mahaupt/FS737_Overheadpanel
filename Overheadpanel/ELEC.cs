@@ -415,13 +415,13 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                //switchACSystems(true);
+                switchAC1Systems(true);
             } else
             {
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 0;
 
                 //displays off
-                //switchACSystems(false);
+                switchAC1Systems(false);
             }
 
             // Check AC Bus 2 Power (essentially same systems as AC Bus 1) 
@@ -431,24 +431,14 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                //switchACSystems(true);
+                switchAC2Systems(true);
             }
             else
             {
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 0;
 
                 //displays off
-                //switchACSystems(false);
-            }
-
-
-            //AC Systems on if one bus is powered? (Transfer bus?) 
-            if (ac_bus1.isPowered || ac_bus2.isPowered)
-            {
-                switchACSystems(true);
-            } else
-            {
-                switchACSystems(false);
+                switchAC2Systems(false);
             }
 
 
@@ -470,9 +460,10 @@ namespace Overheadpanel
         }
 
 
-        //switch AC Systems on / Off
-        private static void switchACSystems(bool power)
+        //switch AC Systems on BUS 1 on / Off
+        private static void switchAC1Systems(bool power)
         {
+            //all displays
             fsi.INT_POWER_EICAS = power;
             fsi.INT_POWER_ISFD = power;
             fsi.INT_POWER_LDU = power;
@@ -481,6 +472,11 @@ namespace Overheadpanel
             fsi.INT_POWER_PFD_CPT = power;
             fsi.INT_POWER_PFD_FO = power;
             fsi.INT_POWER_SRMI = power;
+        }
+        
+        //switch AC Systems on BUS 2 on / Off
+        private static void switchAC2Systems(bool power)
+        {
         }
 
         private static void switchDCSystems(bool power)
