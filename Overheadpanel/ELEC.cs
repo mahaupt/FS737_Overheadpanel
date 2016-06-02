@@ -332,13 +332,11 @@ namespace Overheadpanel
         private static void simElectrics()
         {
             //null reference check
-            if (ac_bus1.powersource != null)
-                if (!ac_bus1.powersource.isOnline)
-                    ac_bus1.disconnect();
+            if (!ac_bus1.powersource.isOnline)
+                ac_bus1.disconnect();
 
-            if (ac_bus2.powersource != null)
-                if (!ac_bus2.powersource.isOnline)
-                    ac_bus2.disconnect();
+            if (!ac_bus2.powersource.isOnline)
+                ac_bus2.disconnect();
 
             if (bustransfer_auto)
             {
@@ -529,15 +527,14 @@ namespace Overheadpanel
         public void connect(AC_Powersource new_powersource)
         {           
             powersource = new_powersource;
-            if (powersource != null)
-                if (powersource.isOnline)
-                {
-                    isPowered = true;                
-                }
+            if (powersource.isOnline)
+            {
+                isPowered = true;                
+            }
         }
         public void disconnect()
         {
-            powersource = null;
+            powersource = disconnected;
             isPowered = false;
         }
     }
