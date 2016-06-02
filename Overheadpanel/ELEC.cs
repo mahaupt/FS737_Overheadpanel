@@ -17,7 +17,7 @@ namespace Overheadpanel
         private static AC_Powersource ext_pwr = new AC_Powersource();
         private static AC_Powersource apu_gen1 = new AC_Powersource();
         private static AC_Powersource apu_gen2 = new AC_Powersource();
-        private static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
+        public static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
         private static IDG idg1 = new IDG(eng1_gen);
         private static IDG idg2 = new IDG(eng2_gen);
         private static AC_BUS ac_bus1 = new AC_BUS(disconnected);
@@ -183,6 +183,7 @@ namespace Overheadpanel
                 //take changes
                 LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS && !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS);
                 LightController.ProcessWrites();
+                simElectrics();
             }
 
             //IDG_1
@@ -195,8 +196,9 @@ namespace Overheadpanel
                 else
                 {
                     debug("ELEC STBY Gen 1 Disconnected");
-                    idg2.Disconnect();
+                    idg1.Disconnect();
                 }
+                simElectrics();
             }
 
             //IDG_2
@@ -211,6 +213,7 @@ namespace Overheadpanel
                     debug("ELEC STBY Gen 2 Disconnected");
                     idg2.Disconnect();
                 }
+                simElectrics();
             }
 
             //APU GEN 1
@@ -299,28 +302,42 @@ namespace Overheadpanel
             {
                 if (fsi.SLI_APU_GEN_RTL)
                 {
+                    debug("ELEC APU ready to load");
                     apu_gen1.Available();
                     apu_gen2.Available();
                 }
                 else
                 {
+                    debug("ELEC APU not ready to load");
                     apu_gen1.Unavailable();
                     apu_gen2.Unavailable();
                 }
+                simElectrics();
             }
 
             if (id == FSIID.SLI_GEN_1_RTL)
             {
-                if (fsi.SLI_GEN_1_RTL && idg1.isConnected) eng1_gen.isAvailable = true;
-                else eng1_gen.isAvailable = false;
+                if (fsi.SLI_GEN_1_RTL && idg1.isConnected) {
+                    eng1_gen.Available();
+                    debug("ELEC GEN 1 ready to load");
+                } else {
+                    eng1_gen.Unavailable();
+                    debug("ELEC GEN 1 not ready to load");
+                }
+                simElectrics();
             }
             
             if (id == FSIID.SLI_GEN_2_RTL)
             {
-                if (fsi.SLI_GEN_2_RTL && idg2.isConnected) eng2_gen.isAvailable = true;
-                else eng2_gen.isAvailable = false;
+                if (fsi.SLI_GEN_2_RTL && idg2.isConnected){
+                    eng2_gen.Available();
+                    debug("ELEC GEN 2 ready to load");
+                } else {
+                    eng2_gen.Unavailable();
+                    debug("ELEC GEN 2 not ready to load");
+                }
+                simElectrics();
             }
-            simElectrics();
         }
 
 
@@ -328,8 +345,14 @@ namespace Overheadpanel
         //
         private static void simElectrics()
         {
-            if (!ac_bus1.powersource.isOnline) ac_bus1.disconnect();
-            if (!ac_bus2.powersource.isOnline) ac_bus2.disconnect();
+            //disconnect powersources if necessary
+            if (!ac_bus1.powersource.isOnline)
+                ac_bus1.disconnect();
+
+            if (!ac_bus2.powersource.isOnline)
+                ac_bus2.disconnect();
+
+            //auto-transfer
             if (bustransfer_auto)
             {
                 if(!ac_bus1.isPowered)
@@ -356,7 +379,6 @@ namespace Overheadpanel
             }
 
             // Set LEDs for Busses
-
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, ac_bus1.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_SOURCE_OFF_LIGHT, ac_bus1.sourceOff);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, ac_bus2.isPowered);
@@ -407,13 +429,13 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                switchACSystems(true);
+                switchAC1Systems(true);
             } else
             {
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 0;
 
                 //displays off
-                switchACSystems(false);
+                switchAC1Systems(false);
             }
 
             // Check AC Bus 2 Power (essentially same systems as AC Bus 1) 
@@ -423,15 +445,16 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                switchACSystems(true);
+                switchAC2Systems(true);
             }
             else
             {
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 0;
 
                 //displays off
-                switchACSystems(false);
+                switchAC2Systems(false);
             }
+
 
             //DC Systems Power (Most important systems e.g. warning leds)
             if (fsi.MBI_ELEC_IND_BATTERY_SWITCH || //battery
@@ -451,9 +474,10 @@ namespace Overheadpanel
         }
 
 
-        //switch AC Systems on / Off
-        private static void switchACSystems(bool power)
+        //switch AC Systems on BUS 1 on / Off
+        private static void switchAC1Systems(bool power)
         {
+            //all displays
             fsi.INT_POWER_EICAS = power;
             fsi.INT_POWER_ISFD = power;
             fsi.INT_POWER_LDU = power;
@@ -462,6 +486,11 @@ namespace Overheadpanel
             fsi.INT_POWER_PFD_CPT = power;
             fsi.INT_POWER_PFD_FO = power;
             fsi.INT_POWER_SRMI = power;
+        }
+        
+        //switch AC Systems on BUS 2 on / Off
+        private static void switchAC2Systems(bool power)
+        {
         }
 
         private static void switchDCSystems(bool power)
@@ -515,7 +544,7 @@ namespace Overheadpanel
         }
         public void disconnect()
         {
-            powersource = null;
+            powersource = ELEC.disconnected;
             isPowered = false;
         }
     }
