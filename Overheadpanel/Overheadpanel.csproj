@@ -57,6 +57,7 @@
     <Compile Include="HEAT.cs" />
     <Compile Include="HYDRAULICS.cs" />
     <Compile Include="IRS.cs" />
+    <Compile Include="LED.cs" />
     <Compile Include="OXY.cs" />
     <Compile Include="Panel.cs" />
     <Compile Include="PNEUMATICS.cs" />
