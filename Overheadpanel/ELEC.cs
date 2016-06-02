@@ -315,13 +315,25 @@ namespace Overheadpanel
 
             if (id == FSIID.SLI_GEN_1_RTL)
             {
-                eng1_gen.isAvailable = (fsi.SLI_GEN_1_RTL && idg1.isConnected);
+                if (fsi.SLI_GEN_1_RTL && idg1.isConnected) {
+                    eng1_gen.Available();
+                    debug("ELEC GEN 1 ready to load");
+                } else {
+                    eng1_gen.Unavailable();
+                    debug("ELEC GEN 1 not ready to load");
+                }
                 simElectrics();
             }
             
             if (id == FSIID.SLI_GEN_2_RTL)
             {
-                eng2_gen.isAvailable = (fsi.SLI_GEN_2_RTL && idg2.isConnected);
+                if (fsi.SLI_GEN_2_RTL && idg2.isConnected){
+                    eng2_gen.Available();
+                    debug("ELEC GEN 2 ready to load");
+                } else {
+                    eng2_gen.Unavailable();
+                    debug("ELEC GEN 2 not ready to load");
+                }
                 simElectrics();
             }
         }
