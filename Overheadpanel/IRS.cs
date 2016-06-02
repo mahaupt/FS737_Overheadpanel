@@ -11,12 +11,15 @@ namespace Overheadpanel
     class IRS : Panel
     {
         private static FSIClient fsi;
-        private static Timer timer_l_align, timer_l_dc_on, timer_r_align, timer_r_dc_on;
+        private static Irs_mod irs_l, irs_r;
 
         public IRS ()
         {
             //debug variable
             is_debug = true;
+
+            irs_l = new Irs_mod();
+            irs_r = new Irs_mod();
 
             //starting FSI Client for IRS
             fsi = new FSIClient("Overhead IRS");
@@ -24,7 +27,9 @@ namespace Overheadpanel
             fsi.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.SLI_BAT_BUS_VOLTAGE,
-                    
+                    FSIID.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE,
+                    FSIID.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE,
+
                     FSIID.MBI_IRS_CONTROL_L_MODE_SWITCH_OFF_POS,
                     FSIID.MBI_IRS_CONTROL_L_MODE_SWITCH_NAV_POS,
                     FSIID.MBI_IRS_CONTROL_L_MODE_SWITCH_ATT_POS,
@@ -51,16 +56,6 @@ namespace Overheadpanel
             //send Settings to Server
             fsi.ProcessWrites();
             LightController.ProcessWrites();
-
-            //create IRS Timer
-            timer_l_align = new Timer(10 * 60, callbackIRS_L_Align);
-            timer_r_align = new Timer(10 * 60, callbackIRS_R_Align);
-            timer_l_dc_on = new Timer(3, callbackIRS_L_DC_ON);
-            timer_r_dc_on = new Timer(3, callbackIRS_R_DC_ON);
-            TimerManager.addTimer(timer_l_align);
-            TimerManager.addTimer(timer_r_align);
-            TimerManager.addTimer(timer_l_dc_on);
-            TimerManager.addTimer(timer_r_dc_on);
         }
 
         static void fsiOnVarReceive(FSIID id)
@@ -77,37 +72,30 @@ namespace Overheadpanel
                 if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_OFF_POS || fsi.SLI_BAT_BUS_VOLTAGE <= 12)
                 {
                     debug("IRS L OFF");
-    
-                    //lights
-                    LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
-                    LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
-    
-                    LightController.ProcessWrites();
-    
-                    //stop timers
-                    timer_l_align.Reset();
-                    timer_l_dc_on.Reset();
+
+                    irs_l.setPowerStatus(false);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_ALIGN_POS)
                 {
                     debug("IRS L ALIGN");
-    
-                    //lights
-                    LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, true);
-                    LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, true);
-                    LightController.ProcessWrites();
-    
-                    //start aligning timers
-                    timer_l_align.Start();
-                    timer_l_dc_on.Start();
+
+                    irs_l.setPowerStatus(true);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_NAV_POS)
                 {
                     debug("IRS L NAV");
+
+                    irs_l.setPowerStatus(true);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_ATT_POS)
                 {
                     debug("IRS L ATT");
+
+                    irs_l.setPowerStatus(true);
+                    sim_irs();
                 }
             }
 
@@ -123,72 +111,194 @@ namespace Overheadpanel
                 if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_OFF_POS || fsi.SLI_BAT_BUS_VOLTAGE <= 12)
                 {
                     debug("IRS R OFF");
-    
-                    //lights
-                    LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
-                    LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
-    
-                    LightController.ProcessWrites();
-    
-                    //stop timers
-                    timer_r_align.Reset();
-                    timer_r_dc_on.Reset();
+
+                    irs_r.setPowerStatus(false);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_ALIGN_POS)
                 {
                     debug("IRS R ALIGN");
-    
-                    //lights
-                    LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, true);
-                    LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, true);
-                    LightController.ProcessWrites();
-    
-                    //start aligning timers
-                    timer_r_align.Start();
-                    timer_r_dc_on.Start();
+
+                    irs_r.setPowerStatus(true);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_NAV_POS)
                 {
                     debug("IRS R NAV");
+
+                    irs_r.setPowerStatus(true);
+                    sim_irs();
                 }
                 else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_ATT_POS)
                 {
                     debug("IRS R ATT");
+
+                    irs_r.setPowerStatus(true);
+                    sim_irs();
                 }
             }
-
            
+
+            //AC Powersources
+            if (id == FSIID.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE)
+            {
+                //no voltage on XFR BUS 2
+                if (fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE <= 50)
+                {
+                    irs_r.setACAvailable(false);
+                } else
+                {
+                    irs_r.setACAvailable(true);
+                }
+                sim_irs();
+            }
+
+            //läuft eigentlich über stby bus
+            if (id == FSIID.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE)
+            {
+                if (fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE <= 50)
+                {
+                    irs_l.setACAvailable(false);
+                } else
+                {
+                    irs_l.setACAvailable(true);
+                }
+                sim_irs();
+            }
         }
 
-
-        private static void callbackIRS_L_Align()
+        public static void sim_irs()
         {
-            //finished aligning - light off
-            debug("IRS L Align finished");
-            LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
+            //IRS L ALIGN LIGHT
+            if (irs_l.isOnline && irs_l.isAligning())
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, true);
+            } else
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ALIGN_LIGHT, false);
+            }
+
+            //IRS R ALIGN LIGHT
+            if (irs_r.isOnline && irs_r.isAligning())
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, true);
+            }
+            else
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
+            }
+
+            //IRS L ON DC
+            if (irs_l.isOnline && irs_l.onDC)
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, true);
+            }
+            else
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
+            }
+
+            //IRS R ON DC
+            if (irs_r.isOnline && irs_r.onDC)
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, true);
+            }
+            else
+            {
+                LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
+            }
+
             LightController.ProcessWrites();
         }
+    }
 
-        private static void callbackIRS_R_Align()
+
+    //IRS Module
+    class Irs_mod
+    {
+        public bool isOnline = false;
+        public bool isAligned = false;
+        public bool acAvailable = true;
+        public bool onDC = false;
+
+        private Timer alignTimer;
+        private Timer dcOffTimer;
+
+        public Irs_mod()
         {
-            debug("IRS R Align finished");
-            LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
-            LightController.ProcessWrites();
+            alignTimer = new Timer(60*3, alignedCallback);
+            dcOffTimer = new Timer(3, dcOffCallback);
+            TimerManager.addTimer(alignTimer);
+            TimerManager.addTimer(dcOffTimer);
         }
 
-        private static void callbackIRS_L_DC_ON()
+        public void setPowerStatus(bool value)
         {
-            //switching to AC, DC_ON_LIGHT off
-            debug("IRS L DC Off");
-            LightController.set(FSIID.MBI_IRS_CONTROL_L_ON_DC_LIGHT, false);
-            LightController.ProcessWrites();
+            if (isOnline != value)
+            {
+                //set to online - start alignment
+                if (value)
+                {
+                    alignTimer.Start();
+
+                    if (acAvailable)
+                    {
+                        dcOffTimer.Start();
+                    }
+
+                    isOnline = true;
+                    onDC = true;
+                }
+                else //set offline
+                {
+                    alignTimer.Reset();
+                    dcOffTimer.Reset();
+
+                    isAligned = false;
+                    isOnline = false;
+                }
+            }
         }
 
-        private static void callbackIRS_R_DC_ON()
+        public void setACAvailable(bool value)
         {
-            debug("IRS R DC Off");
-            LightController.set(FSIID.MBI_IRS_CONTROL_R_ON_DC_LIGHT, false);
-            LightController.ProcessWrites();
+            if (acAvailable != value)
+            {
+                if (value)
+                {
+                    if (isOnline)
+                    {
+                        dcOffTimer.Start();
+                    }
+                    acAvailable = true;
+                }
+                else
+                {
+                    if (isOnline)
+                    {
+                        dcOffTimer.Reset();
+                    }
+                    onDC = true;
+                    acAvailable = false;
+                }
+            }
+        }
+
+        private void alignedCallback()
+        {
+            isAligned = true;
+            IRS.sim_irs();
+        }
+
+        private void dcOffCallback()
+        {
+            onDC = false;
+            IRS.sim_irs();
+        }
+
+        public bool isAligning()
+        {
+            return alignTimer.isEnabled();
         }
     }
 }
