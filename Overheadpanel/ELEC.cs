@@ -17,7 +17,7 @@ namespace Overheadpanel
         private static AC_Powersource ext_pwr = new AC_Powersource();
         private static AC_Powersource apu_gen1 = new AC_Powersource();
         private static AC_Powersource apu_gen2 = new AC_Powersource();
-        private static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
+        public static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
         private static IDG idg1 = new IDG(eng1_gen);
         private static IDG idg2 = new IDG(eng2_gen);
         private static AC_BUS ac_bus1 = new AC_BUS(disconnected);
@@ -196,7 +196,7 @@ namespace Overheadpanel
                 else
                 {
                     debug("ELEC STBY Gen 1 Disconnected");
-                    idg2.Disconnect();
+                    idg1.Disconnect();
                 }
                 simElectrics();
             }
@@ -544,7 +544,7 @@ namespace Overheadpanel
         }
         public void disconnect()
         {
-            powersource = disconnected;
+            powersource = ELEC.disconnected;
             isPowered = false;
         }
     }
