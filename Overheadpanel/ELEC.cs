@@ -331,13 +331,14 @@ namespace Overheadpanel
         //
         private static void simElectrics()
         {
-            //null reference check
+            //disconnect powersources if necessary
             if (!ac_bus1.powersource.isOnline)
                 ac_bus1.disconnect();
 
             if (!ac_bus2.powersource.isOnline)
                 ac_bus2.disconnect();
 
+            //auto-transfer
             if (bustransfer_auto)
             {
                 if(!ac_bus1.isPowered)
@@ -364,7 +365,6 @@ namespace Overheadpanel
             }
 
             // Set LEDs for Busses
-
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_TRANSFER_BUS_OFF_LIGHT, ac_bus1.isPowered);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_1_SOURCE_OFF_LIGHT, ac_bus1.sourceOff);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, ac_bus2.isPowered);
