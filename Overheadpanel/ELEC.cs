@@ -302,11 +302,13 @@ namespace Overheadpanel
             {
                 if (fsi.SLI_APU_GEN_RTL)
                 {
+                    debug("ELEC APU ready to load");
                     apu_gen1.Available();
                     apu_gen2.Available();
                 }
                 else
                 {
+                    debug("ELEC APU not ready to load");
                     apu_gen1.Unavailable();
                     apu_gen2.Unavailable();
                 }
