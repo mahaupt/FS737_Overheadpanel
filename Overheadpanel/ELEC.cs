@@ -183,6 +183,7 @@ namespace Overheadpanel
                 //take changes
                 LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS && !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS);
                 LightController.ProcessWrites();
+                simElectrics();
             }
 
             //IDG_1
@@ -197,6 +198,7 @@ namespace Overheadpanel
                     debug("ELEC STBY Gen 1 Disconnected");
                     idg2.Disconnect();
                 }
+                simElectrics();
             }
 
             //IDG_2
@@ -211,6 +213,7 @@ namespace Overheadpanel
                     debug("ELEC STBY Gen 2 Disconnected");
                     idg2.Disconnect();
                 }
+                simElectrics();
             }
 
             //APU GEN 1
@@ -307,20 +310,20 @@ namespace Overheadpanel
                     apu_gen1.Unavailable();
                     apu_gen2.Unavailable();
                 }
+                simElectrics();
             }
 
             if (id == FSIID.SLI_GEN_1_RTL)
             {
-                if (fsi.SLI_GEN_1_RTL && idg1.isConnected) eng1_gen.isAvailable = true;
-                else eng1_gen.isAvailable = false;
+                eng1_gen.isAvailable = (fsi.SLI_GEN_1_RTL && idg1.isConnected);
+                simElectrics();
             }
             
             if (id == FSIID.SLI_GEN_2_RTL)
             {
-                if (fsi.SLI_GEN_2_RTL && idg2.isConnected) eng2_gen.isAvailable = true;
-                else eng2_gen.isAvailable = false;
+                eng2_gen.isAvailable = (fsi.SLI_GEN_2_RTL && idg2.isConnected);
+                simElectrics();
             }
-            simElectrics();
         }
 
 
@@ -328,8 +331,15 @@ namespace Overheadpanel
         //
         private static void simElectrics()
         {
-            if (!ac_bus1.powersource.isOnline) ac_bus1.disconnect();
-            if (!ac_bus2.powersource.isOnline) ac_bus2.disconnect();
+            //null reference check
+            if (ac_bus1.powersource != null)
+                if (!ac_bus1.powersource.isOnline)
+                    ac_bus1.disconnect();
+
+            if (ac_bus2.powersource != null)
+                if (!ac_bus2.powersource.isOnline)
+                    ac_bus2.disconnect();
+
             if (bustransfer_auto)
             {
                 if(!ac_bus1.isPowered)
@@ -407,13 +417,13 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                switchACSystems(true);
+                //switchACSystems(true);
             } else
             {
                 fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 0;
 
                 //displays off
-                switchACSystems(false);
+                //switchACSystems(false);
             }
 
             // Check AC Bus 2 Power (essentially same systems as AC Bus 1) 
@@ -423,15 +433,26 @@ namespace Overheadpanel
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 110;
 
                 //displays on
-                switchACSystems(true);
+                //switchACSystems(true);
             }
             else
             {
                 fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 0;
 
                 //displays off
+                //switchACSystems(false);
+            }
+
+
+            //AC Systems on if one bus is powered? (Transfer bus?) 
+            if (ac_bus1.isPowered || ac_bus2.isPowered)
+            {
+                switchACSystems(true);
+            } else
+            {
                 switchACSystems(false);
             }
+
 
             //DC Systems Power (Most important systems e.g. warning leds)
             if (fsi.MBI_ELEC_IND_BATTERY_SWITCH || //battery
@@ -508,10 +529,11 @@ namespace Overheadpanel
         public void connect(AC_Powersource new_powersource)
         {           
             powersource = new_powersource;
-            if (powersource.isOnline)
-            {
-                isPowered = true;                
-            }
+            if (powersource != null)
+                if (powersource.isOnline)
+                {
+                    isPowered = true;                
+                }
         }
         public void disconnect()
         {
