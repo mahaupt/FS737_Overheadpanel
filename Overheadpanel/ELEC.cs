@@ -6,12 +6,30 @@ using System.Threading.Tasks;
 using FSInterface;
 using FSToolbox;
 
+/*  ### FS737 ELEC 0.1 ###
+    SIMPLIFIED SIMULATION OF B737-800 ELECTRICAL SYSTEM
+    by Marcel Haupt and Arvid Preuss, 2016
+
+    FOLLOWING CONDITIONS ARE SUPPOSED:
+    * ALL GENERATORS RTL
+    * BATTERY INFINITELY LOADED
+    * NO FAILURES
+
+    TO-DO (not in prioritized order):
+    * Simulate failures upon receive of IOS fails
+    * Create FSI variables for varios new busses and uncomment respective code
+    * Create reset() method: all values are to be set to their initial state
+    * Create failsafe() method: all values are to be set to "online" values regardless of environmental states and switches
+    * Detailed comments and more / more precise debug messages
+*/
+
+
 namespace Overheadpanel
 {
     class ELEC : Panel
     {
         private static FSIClient fsi;
-        private static bool bustransfer_auto = true;
+        private static bool bustransfer_auto = true, sby_pwr_auto = true, sby_pwr_bat = false, battery_online = false;
         private static AC_Powersource eng1_gen = new AC_Powersource();
         private static AC_Powersource eng2_gen = new AC_Powersource();
         private static AC_Powersource ext_pwr_l = new AC_Powersource();
@@ -162,13 +180,17 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_IND_BATTERY_SWITCH)
                 {
                     debug("ELEC DC Bat On");
+                    battery_online = true;
+                    simElectrics();
                 }
                 else
                 {
                     debug("ELEC DC Bat Off");
+                    battery_online = false;
+                    simElectrics();
                 }
 
-                simElectrics();
+                
             }
 
             //STBY Power
@@ -177,17 +199,19 @@ namespace Overheadpanel
                 if (fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS)
                 {
                     debug("ELEC STBY PWR AUTO");
+                    sby_pwr_auto = true;
+                    sby_pwr_bat = false;
                 } else if(fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS)
                 {
                     debug("ELEC STBY PWR BAT");
+                    sby_pwr_auto = false;
+                    sby_pwr_bat = true;
                 } else
                 {
                     debug("ELEC STBY PWR OFF");
+                    sby_pwr_bat = false;
+                    sby_pwr_auto = false;
                 }
-
-                //take changes
-                LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS && !fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS);
-                LightController.ProcessWrites();
                 simElectrics();
             }
 
@@ -467,20 +491,78 @@ namespace Overheadpanel
                 switchAC2Systems(false);
             }
 
+            // DC BUSSES
 
-            //DC Systems Power (Most important systems e.g. warning leds)
-            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH || //battery
-                ac_bus1.isPowered || ac_bus2.isPowered) // AC Power
+            // DC BUS 1
+            if (ac_bus1.isPowered)
             {
-                fsi.SLI_BAT_BUS_VOLTAGE = 24;
+                //fsi.SLI_DC_BUS_1_VOLTAGE = 28
+            }
+            else; //fsi.SLI_DC_BUS_1_VOLTAGE = 0;
+
+            // DC BUS 2
+            if (ac_bus2.isPowered)
+            {
+                //fsi.SLI_DC_BUS_2_VOLTAGE = 28
+            }
+            else; //fsi.SLI_DC_BUS_2_VOLTAGE = 0;
+
+            // DC SWITCHED HOT BATTERY BUS
+            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH)
+            {
+                // fsi.SLI_DC_SWITCHED_HOT_BATTERY_BUS_VOLTAGE = 24;
+            }
+            else; // fsi.SLI_DC_SWITCHED_HOT_BATTERY_BUS_VOLTAGE = 0;
+
+            // DC BATTERY BUS (it is supposed that battery capacity is infinite)
+            if (battery_online || ac_bus1.isPowered || ac_bus2.isPowered)
+            {
+                debug("BATTERY BUS - some power available");
+                if (ac_bus1.isPowered || ac_bus2.isPowered)
+                {
+                    fsi.SLI_BAT_BUS_VOLTAGE = 28;
+                    LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, false);
+                }
+                else if (battery_online)
+                {
+                    fsi.SLI_BAT_BUS_VOLTAGE = 24;
+                    LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, true);
+                }              
                 switchDCSystems(true);
-            } else
+            }
+            else
             {
+                debug("BATTERY BUS - no power available");
                 fsi.SLI_BAT_BUS_VOLTAGE = 0;
                 switchDCSystems(false);
             }
 
-            
+            // STBY POWER  (it is supposed that battery capacity is infinite)
+            if((sby_pwr_auto && (fsi.MBI_ELEC_IND_BATTERY_SWITCH || ac_bus1.isPowered)) || (sby_pwr_bat && fsi.MBI_ELEC_IND_BATTERY_SWITCH))
+            {
+                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 110; // AC STANDBY BUS
+                if (ac_bus1.isPowered)  // STBY BUS RUNNING ON AC BUS 1
+                {
+                    fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 28; // DC STANDBY BUS                    
+                }
+                else // STBY BUS RUNNING ON BATTERY
+                {
+                    fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 24; // DC STANDBY BUS
+                }
+            }
+            else
+            {
+                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 0; // AC STANDBY BUS
+                fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 0; // DC STANDBY BUS
+            }
+
+            // STBY PWR OFF LIGHT
+            if(fsi.SLI_BAT_BUS_VOLTAGE == 0 || fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE == 0 || fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE == 0)
+            {
+                LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, true);
+            }
+            else LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, false);
+
             fsi.ProcessWrites();
             LightController.ProcessWrites();
         }
@@ -513,9 +595,11 @@ namespace Overheadpanel
             if (power)
             {
                 LightController.setLightPower(true);
+                debug("DC Systems Power ON");
             } else
             {
                 LightController.setLightPower(false);
+                debug("DC Systems Power OFF");
             }
         }
     }
