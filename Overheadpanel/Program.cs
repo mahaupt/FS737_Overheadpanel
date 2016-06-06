@@ -33,6 +33,7 @@ namespace Overheadpanel
             DOORS doors = new DOORS();
             ENGINEECC engineecc = new ENGINEECC();
             FRECSTALLTEST frecstalltest = new FRECSTALLTEST();
+            LED led = new LED();
 
             //enable light control after all lights have been initialized
             LightController.enableUpdate();

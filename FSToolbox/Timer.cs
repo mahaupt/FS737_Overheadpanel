@@ -52,5 +52,10 @@ namespace FSToolbox
         {
             enabled = false;
         }
+
+        public bool isEnabled()
+        {
+            return enabled;
+        }
     }
 }
