@@ -28,7 +28,7 @@ namespace Overheadpanel
                 {
                     FSIID.SLI_BAT_BUS_VOLTAGE,
                     FSIID.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE,
-                    FSIID.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE,
+                    FSIID.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE,
 
                     FSIID.MBI_IRS_CONTROL_L_MODE_SWITCH_OFF_POS,
                     FSIID.MBI_IRS_CONTROL_L_MODE_SWITCH_NAV_POS,
@@ -154,9 +154,9 @@ namespace Overheadpanel
             }
 
             //läuft eigentlich über stby bus
-            if (id == FSIID.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE)
+            if (id == FSIID.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE)
             {
-                if (fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE <= 50)
+                if (fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE <= 50)
                 {
                     irs_l.setACAvailable(false);
                 } else
