@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class ANTIICE : Panel
     {
-        private static FSIClient fsi;
-
         public ANTIICE()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead ANTIICE");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH,
                     FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH,
@@ -36,10 +33,9 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, false);
             LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_ANTI_ICE_LIGHT, false);
 
-            fsi.MBI_ANTI_ICE_LAMPTEST = false;
+            FSIcm.inst.MBI_ANTI_ICE_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -47,7 +43,7 @@ namespace Overheadpanel
         {
 
             //WING
-            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE Wing On");
 
@@ -55,7 +51,7 @@ namespace Overheadpanel
                 LightController.set(FSIID.MBI_ANTI_ICE_WING_R_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_WING_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE Wing Off");
 
@@ -66,14 +62,14 @@ namespace Overheadpanel
 
 
             //ENG 1
-            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 1 On");
 
                 LightController.set(FSIID.MBI_ANTI_ICE_ENG_1_COWL_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_ENG_1_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE ENG 1 Off");
 
@@ -83,14 +79,14 @@ namespace Overheadpanel
 
 
             //ENG 2
-            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == false)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == false)
             {
                 debug("ANTI_ICE ENG 2 On");
 
                 LightController.set(FSIID.MBI_ANTI_ICE_ENG_2_COWL_VALVE_OPEN_LIGHT, true);
                 LightController.ProcessWrites();
             }
-            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && fsi.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == true)
+            if (id == FSIID.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH && FSIcm.inst.MBI_ANTI_ICE_ENG_2_ANTI_ICE_SWITCH == true)
             {
                 debug("ANTI_ICE ENG 2 Off");
 

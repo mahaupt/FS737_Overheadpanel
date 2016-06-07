@@ -26,22 +26,20 @@ namespace FSToolbox
 
 
         private static Dictionary<FSIID, LightControllerLight> lightsList;
-        private static FSIClient fsi;
 
         public LightController()
         {
-            fsi = new FSIClient("Light Controller");
             lightsList = new Dictionary<FSIID, LightControllerLight>();
 
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS,
                     FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS
                 }
             );
 
-            fsi.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -50,12 +48,12 @@ namespace FSToolbox
 
             if (id ==FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS || id == FSIID.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
             {
-                if (fsi.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS)
+                if (FSIcm.inst.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_DIM_POS)
                 {
                     debug("MIP Lights Dim");
                     setLightBrightness(false);
                     setLightTest(false);
-                } else if (fsi.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
+                } else if (FSIcm.inst.MBI_MIP_CM1_LIGHTS_TEST_SWITCH_TEST_POS)
                 {
                     debug("MIP Lights Test");
                     setLightBrightness(true);
@@ -78,7 +76,7 @@ namespace FSToolbox
             {
                 String name = id.ToString("g") + "*";
 
-                Type type = fsi.GetType();
+                Type type = FSIcm.inst.GetType();
                 MemberInfo[] memberInfos = type.GetMember(name);
 
                 if (memberInfos.Length == 1)
@@ -96,13 +94,13 @@ namespace FSToolbox
 
             //set the light value
             lightsList[id].set(value);
-            lightsList[id].writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
+            lightsList[id].writeStatus(lights_power, lights_test, lights_brightness, ref FSIcm.inst);
         }
 
 
         public static void ProcessWrites()
         {
-            fsi.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
         private static void updateAll()
@@ -113,7 +111,7 @@ namespace FSToolbox
                 for (int i = 0; i < lightsList.Count; i++)
                 {
                     //Variable nicht Thread-Safe! Bei Errors erstmal auf weiter drücken
-                    lightsList.ElementAt(i).Value.writeStatus(lights_power, lights_test, lights_brightness, ref fsi);
+                    lightsList.ElementAt(i).Value.writeStatus(lights_power, lights_test, lights_brightness, ref FSIcm.inst);
                 }
             }
         }
@@ -206,7 +204,7 @@ namespace FSToolbox
         }
 
 
-        public void writeStatus(bool main_lights_power, bool lights_test, bool light_brightness, ref FSIClient fsi_object)
+        public void writeStatus(bool main_lights_power, bool lights_test, bool light_brightness, ref FSIcm fsi_object)
         {
             bool true_light_status = get(main_lights_power, lights_test);
 

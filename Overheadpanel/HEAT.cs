@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class HEAT : Panel
     {
-        private static FSIClient fsi;
-
         public HEAT()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead HEAT");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_HEAT_OVHT_TEST_SWITCH,
                     FSIID.MBI_HEAT_PROBE_HEAT_A_SWITCH,
@@ -51,17 +48,16 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, false);
             LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_OVERHEAT_LIGHT, false);
 
-            fsi.MBI_HEAT_LAMPTEST = false;
+            FSIcm.inst.MBI_HEAT_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
         static void fsiOnVarReceive(FSIID id)
         {
             //OVERHEAT TEST ON
-            if (id == FSIID.MBI_HEAT_OVHT_TEST_SWITCH && fsi.MBI_HEAT_OVHT_TEST_SWITCH == true)
+            if (id == FSIID.MBI_HEAT_OVHT_TEST_SWITCH && FSIcm.inst.MBI_HEAT_OVHT_TEST_SWITCH == true)
             {
                 debug("HEAT OVHT TEST On");
 
@@ -74,7 +70,7 @@ namespace Overheadpanel
             }
 
             //OVERHEAT TEST OFF
-            if (id == FSIID.MBI_HEAT_OVHT_TEST_SWITCH && fsi.MBI_HEAT_OVHT_TEST_SWITCH == false)
+            if (id == FSIID.MBI_HEAT_OVHT_TEST_SWITCH && FSIcm.inst.MBI_HEAT_OVHT_TEST_SWITCH == false)
             {
                 debug("HEAT OVHT TEST Off");
 
@@ -88,7 +84,7 @@ namespace Overheadpanel
             //WND LEFT FWD
             if (id == FSIID.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH)
             {
-                if (fsi.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH)
                 {
                     debug("HEAT WND L FWD On");
                 }
@@ -98,7 +94,7 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT, fsi.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_FWD_ON_LIGHT, FSIcm.inst.MBI_HEAT_WINDOW_LEFT_FWD_SWITCH);
                 LightController.ProcessWrites();
             }
 
@@ -106,7 +102,7 @@ namespace Overheadpanel
             //WND LEFT SIDE
             if (id == FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH)
             {
-                if (fsi.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH)
                 {
                     debug("HEAT WND L SIDE On");
                 }
@@ -116,14 +112,14 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT, fsi.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_LEFT_SIDE_ON_LIGHT, FSIcm.inst.MBI_HEAT_WINDOW_LEFT_SIDE_SWITCH);
                 LightController.ProcessWrites();
             }
 
             //WND RIGHT FWD
             if (id == FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH)
             {
-                if (fsi.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH)
                 {
                     debug("HEAT WND R FWD On");
                 }
@@ -133,7 +129,7 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT, fsi.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_FWD_ON_LIGHT, FSIcm.inst.MBI_HEAT_WINDOW_RIGHT_FWD_SWITCH);
                 LightController.ProcessWrites();
             }
 
@@ -141,7 +137,7 @@ namespace Overheadpanel
             //WND RIGHT SIDE
             if (id == FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH)
             {
-                if (fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH)
                 {
                     debug("HEAT WND R SIDE On");
                 }
@@ -151,7 +147,7 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, fsi.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_WINDOW_RIGHT_SIDE_ON_LIGHT, FSIcm.inst.MBI_HEAT_WINDOW_RIGHT_SIDE_SWITCH);
                 LightController.ProcessWrites();
 
             }
@@ -160,7 +156,7 @@ namespace Overheadpanel
             //Probes A
             if (id == FSIID.MBI_HEAT_PROBE_HEAT_A_SWITCH)
             {
-                if (fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_PROBE_HEAT_A_SWITCH)
                 {
                     debug("HEAT PROBE A On");
                 }
@@ -170,10 +166,10 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_L_ALPHA_VANE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_L_ELEV_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_CAPT_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_TEMP_PROBE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_L_ALPHA_VANE_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_L_ELEV_PITOT_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_CAPT_PITOT_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_A_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_TEMP_PROBE_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_A_SWITCH);
                 LightController.ProcessWrites();
 
             }
@@ -181,7 +177,7 @@ namespace Overheadpanel
             //Probes B
             if (id == FSIID.MBI_HEAT_PROBE_HEAT_B_SWITCH)
             {
-                if (fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH)
+                if (FSIcm.inst.MBI_HEAT_PROBE_HEAT_B_SWITCH)
                 {
                     debug("HEAT PROBE B On");
                 }
@@ -191,10 +187,10 @@ namespace Overheadpanel
                 }
 
                 //set lights
-                LightController.set(FSIID.MBI_HEAT_R_ALPHA_VANE_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_R_ELEV_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_FO_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
-                LightController.set(FSIID.MBI_HEAT_AUX_PITOT_LIGHT, !fsi.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_R_ALPHA_VANE_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_R_ELEV_PITOT_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_FO_PITOT_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_B_SWITCH);
+                LightController.set(FSIID.MBI_HEAT_AUX_PITOT_LIGHT, !FSIcm.inst.MBI_HEAT_PROBE_HEAT_B_SWITCH);
                 LightController.ProcessWrites();
 
             }

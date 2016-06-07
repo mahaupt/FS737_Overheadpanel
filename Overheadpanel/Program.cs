@@ -9,11 +9,13 @@ namespace Overheadpanel
 {
     class Program
     {
+        private static FSIcm fsicm;
         private static TimerManager timerManager;
         private static LightController lightController;
 
         static void Main(string[] args)
         {
+            fsicm = new FSIcm("Overheadpanel Systems");
             //enabling timer manager
             timerManager = new TimerManager();
             lightController = new FSToolbox.LightController();

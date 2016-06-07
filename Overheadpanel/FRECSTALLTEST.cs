@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class FRECSTALLTEST : Panel
     {
-        private static FSIClient fsi;
-
         public FRECSTALLTEST()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead FRECSTALLTEST");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_FLIGHT_REC_SPEED_WARNING_TEST_1_SWITCH,
                     FSIID.MBI_FLIGHT_REC_SPEED_WARNING_TEST_2_SWITCH,
@@ -33,9 +30,9 @@ namespace Overheadpanel
             //standard values
             LightController.set(FSIID.MBI_FLIGHT_REC_OFF_LIGHT, true);
 
-            fsi.MBI_FLIGHT_REC_LAMPTEST = false;
+            FSIcm.inst.MBI_FLIGHT_REC_LAMPTEST = false;
 
-            fsi.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
             LightController.ProcessWrites();
         }
 
@@ -45,7 +42,7 @@ namespace Overheadpanel
             //FLIGHT REC TEST
             if (id == FSIID.MBI_FLIGHT_REC_TEST_SWITCH)
             {
-                if (fsi.MBI_FLIGHT_REC_TEST_SWITCH)
+                if (FSIcm.inst.MBI_FLIGHT_REC_TEST_SWITCH)
                 {
                     debug("FLIGHT REC TEST");
                     LightController.set(FSIID.MBI_FLIGHT_REC_OFF_LIGHT, false);

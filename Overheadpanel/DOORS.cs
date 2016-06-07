@@ -10,16 +10,13 @@ namespace Overheadpanel
 {
     class DOORS : Panel
     {
-        private static FSIClient fsi;
-
         public DOORS()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead DOORS");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
             /*fsi.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS,
@@ -41,10 +38,9 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_DOOR_RIGHT_AFT_OVERWING_LIGHT, false);
             LightController.set(FSIID.MBI_DOOR_RIGHT_FWD_OVERWING_LIGHT, false);
 
-            fsi.MBI_DOOR_LAMPTEST = false;
+            FSIcm.inst.MBI_DOOR_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 

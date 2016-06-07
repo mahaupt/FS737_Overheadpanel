@@ -10,7 +10,6 @@ namespace Overheadpanel
 {
     class IRS : Panel
     {
-        private static FSIClient fsi;
         private static Irs_mod irs_l, irs_r;
 
         public IRS ()
@@ -22,9 +21,8 @@ namespace Overheadpanel
             irs_r = new Irs_mod();
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead IRS");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.SLI_BAT_BUS_VOLTAGE,
                     FSIID.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE,
@@ -51,11 +49,10 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_IRS_CONTROL_R_FAULT_LIGHT, false);
             LightController.set(FSIID.MBI_IRS_CONTROL_R_ALIGN_LIGHT, false);
 
-            fsi.MBI_IRS_CONTROL_LAMPTEST = false;
+            FSIcm.inst.MBI_IRS_CONTROL_LAMPTEST = false;
 
             //send Settings to Server
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
         static void fsiOnVarReceive(FSIID id)
@@ -69,28 +66,28 @@ namespace Overheadpanel
                 id == FSIID.SLI_BAT_BUS_VOLTAGE)
             {
                 //switch to off if
-                if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_OFF_POS || fsi.SLI_BAT_BUS_VOLTAGE <= 12)
+                if (FSIcm.inst.MBI_IRS_CONTROL_L_MODE_SWITCH_OFF_POS || FSIcm.inst.SLI_BAT_BUS_VOLTAGE <= 12)
                 {
                     debug("IRS L OFF");
 
                     irs_l.setPowerStatus(false);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_ALIGN_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_L_MODE_SWITCH_ALIGN_POS)
                 {
                     debug("IRS L ALIGN");
 
                     irs_l.setPowerStatus(true);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_NAV_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_L_MODE_SWITCH_NAV_POS)
                 {
                     debug("IRS L NAV");
 
                     irs_l.setPowerStatus(true);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_L_MODE_SWITCH_ATT_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_L_MODE_SWITCH_ATT_POS)
                 {
                     debug("IRS L ATT");
 
@@ -108,28 +105,28 @@ namespace Overheadpanel
                 id == FSIID.SLI_BAT_BUS_VOLTAGE)
             {
                 
-                if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_OFF_POS || fsi.SLI_BAT_BUS_VOLTAGE <= 12)
+                if (FSIcm.inst.MBI_IRS_CONTROL_R_MODE_SWITCH_OFF_POS || FSIcm.inst.SLI_BAT_BUS_VOLTAGE <= 12)
                 {
                     debug("IRS R OFF");
 
                     irs_r.setPowerStatus(false);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_ALIGN_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_R_MODE_SWITCH_ALIGN_POS)
                 {
                     debug("IRS R ALIGN");
 
                     irs_r.setPowerStatus(true);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_NAV_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_R_MODE_SWITCH_NAV_POS)
                 {
                     debug("IRS R NAV");
 
                     irs_r.setPowerStatus(true);
                     sim_irs();
                 }
-                else if (fsi.MBI_IRS_CONTROL_R_MODE_SWITCH_ATT_POS)
+                else if (FSIcm.inst.MBI_IRS_CONTROL_R_MODE_SWITCH_ATT_POS)
                 {
                     debug("IRS R ATT");
 
@@ -143,7 +140,7 @@ namespace Overheadpanel
             if (id == FSIID.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE)
             {
                 //no voltage on XFR BUS 2
-                if (fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE <= 50)
+                if (FSIcm.inst.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE <= 50)
                 {
                     irs_r.setACAvailable(false);
                 } else
@@ -156,7 +153,7 @@ namespace Overheadpanel
             //läuft eigentlich über stby bus
             if (id == FSIID.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE)
             {
-                if (fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE <= 50)
+                if (FSIcm.inst.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE <= 50)
                 {
                     irs_l.setACAvailable(false);
                 } else

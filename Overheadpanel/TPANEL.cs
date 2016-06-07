@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class TPANEL : Panel
     {
-        private static FSIClient fsi;
-
         public TPANEL()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead TPANEL");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS,
                     FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_ON_POS,
@@ -64,11 +61,10 @@ namespace Overheadpanel
 
             LightController.set(FSIID.MBI_UPPER_T_PSEU_LIGHT, false);
 
-            fsi.MBI_LOWER_T_LAMPTEST = false;
-            fsi.MBI_UPPER_T_LAMPTEST = false;
+            FSIcm.inst.MBI_LOWER_T_LAMPTEST = false;
+            FSIcm.inst.MBI_UPPER_T_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -77,11 +73,11 @@ namespace Overheadpanel
             //EMER EXIT LIGHTS
             if (id == FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS)
             {
-                if (fsi.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_ON_POS)
+                if (FSIcm.inst.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_ON_POS)
                 {
                     debug("EMER EXIT LIGHTS ON");
                     LightController.set(FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_NOT_ARMED_LIGHT, false);
-                } else if (fsi.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS)
+                } else if (FSIcm.inst.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS)
                 {
                     debug("EMER EXIT LIGHTS OFF");
                     LightController.set(FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_NOT_ARMED_LIGHT, true);
@@ -97,7 +93,7 @@ namespace Overheadpanel
             //GEAR LIGHTS
             if (id == FSIID.FSI_GEAR_ACTUAL_NOSE)
             {
-                if (fsi.FSI_GEAR_ACTUAL_NOSE >= 16383)
+                if (FSIcm.inst.FSI_GEAR_ACTUAL_NOSE >= 16383)
                 {
                     LightController.set(FSIID.MBI_UPPER_T_NOSE_GEAR_LIGHT, true);
                 } else
@@ -108,7 +104,7 @@ namespace Overheadpanel
             }
             if (id == FSIID.FSI_GEAR_ACTUAL_LEFT)
             {
-                if (fsi.FSI_GEAR_ACTUAL_LEFT >= 16383)
+                if (FSIcm.inst.FSI_GEAR_ACTUAL_LEFT >= 16383)
                 {
                     LightController.set(FSIID.MBI_UPPER_T_LEFT_GEAR_LIGHT, true);
                 }
@@ -120,7 +116,7 @@ namespace Overheadpanel
             }
             if (id == FSIID.FSI_GEAR_ACTUAL_RIGHT)
             {
-                if (fsi.FSI_GEAR_ACTUAL_RIGHT >= 16383)
+                if (FSIcm.inst.FSI_GEAR_ACTUAL_RIGHT >= 16383)
                 {
                     LightController.set(FSIID.MBI_UPPER_T_RIGHT_GEAR_LIGHT, true);
                 }
@@ -137,57 +133,57 @@ namespace Overheadpanel
             //beacon / anti-collision
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH)
             {
-                fsi.FSI_LIGHTS = setLandingLights(2, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
-                debug("LOWER_T Beacon " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(2, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
+                debug("LOWER_T Beacon " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
+                FSIcm.inst.ProcessWrites();
             }
 
             //position / nav lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS)
             {
-                fsi.FSI_LIGHTS = setLandingLights(1, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
-                debug("LOWER_T Navlights " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(1, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
+                debug("LOWER_T Navlights " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
+                FSIcm.inst.ProcessWrites();
             }
 
             //strobe lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS)
             {
-                fsi.FSI_LIGHTS = setLandingLights(5, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
-                debug("LOWER_T Strobes " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(5, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
+                debug("LOWER_T Strobes " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
+                FSIcm.inst.ProcessWrites();
             }
 
             //taxi lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS)
             {
-                fsi.FSI_LIGHTS = setLandingLights(4, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
-                debug("LOWER_T Taxi " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(4, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
+                debug("LOWER_T Taxi " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
+                FSIcm.inst.ProcessWrites();
             }
 
             //landing lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH)
             {
-                fsi.FSI_LIGHTS = setLandingLights(3, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
-                debug("LOWER_T Landing " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(3, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
+                debug("LOWER_T Landing " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
+                FSIcm.inst.ProcessWrites();
             }
 
             //logo lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH)
             {
-                fsi.FSI_LIGHTS = setLandingLights(9, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
-                debug("LOWER_T Logo " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(9, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
+                debug("LOWER_T Logo " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
+                FSIcm.inst.ProcessWrites();
             }
 
             //wing lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH)
             {
-                fsi.FSI_LIGHTS = setLandingLights(8, fsi.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
-                debug("LOWER_T Wing " + fsi.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
-                fsi.ProcessWrites();
+                FSIcm.inst.FSI_LIGHTS = setLandingLights(8, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
+                debug("LOWER_T Wing " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
+                FSIcm.inst.ProcessWrites();
             }
         }
 

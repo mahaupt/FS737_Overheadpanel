@@ -28,7 +28,6 @@ namespace Overheadpanel
 {
     class ELEC : Panel
     {
-        private static FSIClient fsi;
         private static bool bustransfer_auto = true, sby_pwr_auto = true, sby_pwr_bat = false, battery_online = false;
         private static AC_Powersource eng1_gen = new AC_Powersource();
         private static AC_Powersource eng2_gen = new AC_Powersource();
@@ -49,9 +48,8 @@ namespace Overheadpanel
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead ELEC");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.IOS_GRD_PWR_CONNECTED,
                     FSIID.SLI_APU_GEN_RTL,
@@ -101,10 +99,10 @@ namespace Overheadpanel
             );
 
             //GND PWR. APU, ENG GEN testweise alle auf ON
-            fsi.SLI_APU_GEN_RTL = true;
-            fsi.IOS_GRD_PWR_CONNECTED = true;
-            fsi.SLI_GEN_1_RTL = true;
-            fsi.SLI_GEN_2_RTL = true;
+            FSIcm.inst.SLI_APU_GEN_RTL = true;
+            FSIcm.inst.IOS_GRD_PWR_CONNECTED = true;
+            FSIcm.inst.SLI_GEN_1_RTL = true;
+            FSIcm.inst.SLI_GEN_2_RTL = true;
 
             //standard values
             LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, false);
@@ -122,12 +120,11 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_TRANSFER_BUS_OFF_LIGHT, false);
             LightController.set(FSIID.MBI_ELEC_BUS_GEN_2_SOURCE_OFF_LIGHT, false);
 
-            fsi.MBI_ELEC_BUS_LAMPTEST = false;
-            fsi.MBI_ELEC_IND_LAMPTEST = false;
-            fsi.MBI_ELEC_STBY_LAMPTEST = false;
+            FSIcm.inst.MBI_ELEC_BUS_LAMPTEST = false;
+            FSIcm.inst.MBI_ELEC_IND_LAMPTEST = false;
+            FSIcm.inst.MBI_ELEC_STBY_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
 
             simElectrics();
         }
@@ -139,7 +136,7 @@ namespace Overheadpanel
             //GROUND POWER
             if (id == FSIID.IOS_GRD_PWR_CONNECTED)
             {
-                if (fsi.IOS_GRD_PWR_CONNECTED)
+                if (FSIcm.inst.IOS_GRD_PWR_CONNECTED)
                 {
                     debug("ELEC GND PWR Connected");
                     ext_pwr_l.Available();
@@ -152,14 +149,14 @@ namespace Overheadpanel
                 }
 
                 //GND PWR available
-                LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, fsi.IOS_GRD_PWR_CONNECTED);
+                LightController.set(FSIID.MBI_ELEC_BUS_GRD_PWR_AVAILABLE_LIGHT, FSIcm.inst.IOS_GRD_PWR_CONNECTED);
                 simElectrics();
             }
 
             //GROUND POWER SWITCH
             if (id == FSIID.MBI_ELEC_BUS_GRD_PWR_SWITCH)
             {
-                if (fsi.MBI_ELEC_BUS_GRD_PWR_SWITCH)
+                if (FSIcm.inst.MBI_ELEC_BUS_GRD_PWR_SWITCH)
                 {
                     debug("ELEC GND PWR SWITCH On");
                     if (ext_pwr_l.SwitchOn()) ac_bus1.select(ext_pwr_l);
@@ -177,7 +174,7 @@ namespace Overheadpanel
             //battery
             if (id == FSIID.MBI_ELEC_IND_BATTERY_SWITCH)
             {
-                if (fsi.MBI_ELEC_IND_BATTERY_SWITCH)
+                if (FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH)
                 {
                     debug("ELEC DC Bat On");
                     battery_online = true;
@@ -196,12 +193,12 @@ namespace Overheadpanel
             //STBY Power
             if (id == FSIID.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS || id == FSIID.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS)
             {
-                if (fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS)
+                if (FSIcm.inst.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_AUTO_POS)
                 {
                     debug("ELEC STBY PWR AUTO");
                     sby_pwr_auto = true;
                     sby_pwr_bat = false;
-                } else if(fsi.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS)
+                } else if(FSIcm.inst.MBI_ELEC_STBY_STANDBY_POWER_SWITCH_BAT_POS)
                 {
                     debug("ELEC STBY PWR BAT");
                     sby_pwr_auto = false;
@@ -218,7 +215,7 @@ namespace Overheadpanel
             //IDG_1
             if (id == FSIID.MBI_ELEC_STBY_GEN_1_DISCONNECT_SWITCH)
             {
-                if (!fsi.MBI_ELEC_STBY_GEN_1_DISCONNECT_SWITCH)
+                if (!FSIcm.inst.MBI_ELEC_STBY_GEN_1_DISCONNECT_SWITCH)
                 {
                     debug("ELEC STBY Gen 1 Connected");
                 }
@@ -233,7 +230,7 @@ namespace Overheadpanel
             //IDG_2
             if (id == FSIID.MBI_ELEC_STBY_GEN_2_DISCONNECT_SWITCH)
             {
-                if (!fsi.MBI_ELEC_STBY_GEN_2_DISCONNECT_SWITCH)
+                if (!FSIcm.inst.MBI_ELEC_STBY_GEN_2_DISCONNECT_SWITCH)
                 {
                     debug("ELEC STBY Gen 2 Connected");                    
                 }
@@ -248,12 +245,12 @@ namespace Overheadpanel
             //APU GEN 1
             if (id == FSIID.MBI_ELEC_BUS_APU_GEN_1_SWITCH_OFF_POS || id == FSIID.MBI_ELEC_BUS_APU_GEN_1_SWITCH_ON_POS)
             {
-                if (fsi.MBI_ELEC_BUS_APU_GEN_1_SWITCH_OFF_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_APU_GEN_1_SWITCH_OFF_POS)
                 {
                     debug("ELEC APU GEN 1 Off");
                     apu_gen1.SwitchOff();
                 }
-                if (fsi.MBI_ELEC_BUS_APU_GEN_1_SWITCH_ON_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_APU_GEN_1_SWITCH_ON_POS)
                 {
                     debug("ELEC APU GEN 1 On");
                     if (apu_gen1.SwitchOn())
@@ -269,12 +266,12 @@ namespace Overheadpanel
             //APU GEN 2
             if (id == FSIID.MBI_ELEC_BUS_APU_GEN_2_SWITCH_OFF_POS || id == FSIID.MBI_ELEC_BUS_APU_GEN_2_SWITCH_ON_POS)
             {
-                if (fsi.MBI_ELEC_BUS_APU_GEN_2_SWITCH_OFF_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_APU_GEN_2_SWITCH_OFF_POS)
                 {
                     debug("ELEC APU GEN 2 Off");
                     apu_gen2.SwitchOff();
                 }
-                if (fsi.MBI_ELEC_BUS_APU_GEN_2_SWITCH_ON_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_APU_GEN_2_SWITCH_ON_POS)
                 {
                     debug("ELEC APU GEN 2 On");
                     if (apu_gen2.SwitchOn())
@@ -291,12 +288,12 @@ namespace Overheadpanel
             //ENG 1 GEN
             if (id == FSIID.MBI_ELEC_BUS_GEN_1_SWITCH_OFF_POS || id == FSIID.MBI_ELEC_BUS_GEN_1_SWITCH_ON_POS)
             {
-                if (fsi.MBI_ELEC_BUS_GEN_1_SWITCH_OFF_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_GEN_1_SWITCH_OFF_POS)
                 {
                     debug("ELEC ENG GEN 1 Off");
                     eng1_gen.SwitchOff();
                 }
-                if (fsi.MBI_ELEC_BUS_GEN_1_SWITCH_ON_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_GEN_1_SWITCH_ON_POS)
                 {
                     debug("ELEC ENG GEN 1 On");
                     if(eng1_gen.SwitchOn()) ac_bus1.select(eng1_gen);
@@ -307,12 +304,12 @@ namespace Overheadpanel
             //ENG 2 GEN
             if (id == FSIID.MBI_ELEC_BUS_GEN_2_SWITCH_OFF_POS || id == FSIID.MBI_ELEC_BUS_GEN_2_SWITCH_ON_POS)
             {
-                if (fsi.MBI_ELEC_BUS_GEN_2_SWITCH_OFF_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_GEN_2_SWITCH_OFF_POS)
                 {
                     debug("ELEC ENG GEN 2 Off");
                     eng2_gen.SwitchOff();
                 }
-                if (fsi.MBI_ELEC_BUS_GEN_2_SWITCH_ON_POS)
+                if (FSIcm.inst.MBI_ELEC_BUS_GEN_2_SWITCH_ON_POS)
                 {
                     debug("ELEC ENG GEN 2 On");
                     if (eng2_gen.SwitchOn()) ac_bus2.select(eng2_gen);
@@ -323,7 +320,7 @@ namespace Overheadpanel
             //BUS TRANSFER
             if (id == FSIID.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
             {
-                if (!fsi.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
+                if (!FSIcm.inst.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
                 {
                     debug("ELEC BUS TRANSFER AUTO");
                     bustransfer_auto = true;
@@ -340,7 +337,7 @@ namespace Overheadpanel
             //some changes in generator availability
             if (id == FSIID.SLI_APU_GEN_RTL)
             {
-                if (fsi.SLI_APU_GEN_RTL)
+                if (FSIcm.inst.SLI_APU_GEN_RTL)
                 {
                     debug("ELEC APU ready to load");
                     apu_gen1.Available();
@@ -357,7 +354,7 @@ namespace Overheadpanel
 
             if (id == FSIID.SLI_GEN_1_RTL)
             {
-                if (fsi.SLI_GEN_1_RTL && idg1.isConnected) {
+                if (FSIcm.inst.SLI_GEN_1_RTL && idg1.isConnected) {
                     eng1_gen.Available();
                     debug("ELEC GEN 1 ready to load");
                 } else {
@@ -369,7 +366,7 @@ namespace Overheadpanel
             
             if (id == FSIID.SLI_GEN_2_RTL)
             {
-                if (fsi.SLI_GEN_2_RTL && idg2.isConnected){
+                if (FSIcm.inst.SLI_GEN_2_RTL && idg2.isConnected){
                     eng2_gen.Available();
                     debug("ELEC GEN 2 ready to load");
                 } else {
@@ -421,7 +418,7 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_ELEC_STBY_GEN_2_DRIVE_LIGHT, !eng2_gen.isAvailable);
 
             //BAT DISCHARGE LIGHT
-            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH && !ac_bus1.isPowered && !ac_bus2.isPowered)
+            if (FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH && !ac_bus1.isPowered && !ac_bus2.isPowered)
             {
                 LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, true);
             } else
@@ -462,13 +459,13 @@ namespace Overheadpanel
             if (ac_bus1.isPowered)
             {
                 //set SLI Voltage
-                fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 110;
+                FSIcm.inst.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 110;
 
                 //displays on
                 switchAC1Systems(true);
             } else
             {
-                fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 0;
+                FSIcm.inst.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE = 0;
 
                 //displays off
                 switchAC1Systems(false);
@@ -478,14 +475,14 @@ namespace Overheadpanel
             // ### TO-DO: Switch single systems depending on which AC Bus is powered
             if (ac_bus2.isPowered)
             {
-                fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 110;
+                FSIcm.inst.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 110;
 
                 //displays on
                 switchAC2Systems(true);
             }
             else
             {
-                fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 0;
+                FSIcm.inst.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE = 0;
 
                 //displays off
                 switchAC2Systems(false);
@@ -508,7 +505,7 @@ namespace Overheadpanel
             else; //fsi.SLI_DC_BUS_2_VOLTAGE = 0;
 
             // DC SWITCHED HOT BATTERY BUS
-            if (fsi.MBI_ELEC_IND_BATTERY_SWITCH)
+            if (FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH)
             {
                 // fsi.SLI_DC_SWITCHED_HOT_BATTERY_BUS_VOLTAGE = 24;
             }
@@ -520,12 +517,12 @@ namespace Overheadpanel
                 debug("BATTERY BUS - some power available");
                 if (ac_bus1.isPowered || ac_bus2.isPowered)
                 {
-                    fsi.SLI_BAT_BUS_VOLTAGE = 28;
+                    FSIcm.inst.SLI_BAT_BUS_VOLTAGE = 28;
                     LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, false);
                 }
                 else if (battery_online)
                 {
-                    fsi.SLI_BAT_BUS_VOLTAGE = 24;
+                    FSIcm.inst.SLI_BAT_BUS_VOLTAGE = 24;
                     LightController.set(FSIID.MBI_ELEC_IND_BAT_DISCHARGE_LIGHT, true);
                 }              
                 switchDCSystems(true);
@@ -533,38 +530,37 @@ namespace Overheadpanel
             else
             {
                 debug("BATTERY BUS - no power available");
-                fsi.SLI_BAT_BUS_VOLTAGE = 0;
+                FSIcm.inst.SLI_BAT_BUS_VOLTAGE = 0;
                 switchDCSystems(false);
             }
 
             // STBY POWER  (it is supposed that battery capacity is infinite)
-            if((sby_pwr_auto && (fsi.MBI_ELEC_IND_BATTERY_SWITCH || ac_bus1.isPowered)) || (sby_pwr_bat && fsi.MBI_ELEC_IND_BATTERY_SWITCH))
+            if((sby_pwr_auto && (FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH || ac_bus1.isPowered)) || (sby_pwr_bat && FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH))
             {
-                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 110; // AC STANDBY BUS
+                FSIcm.inst.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 110; // AC STANDBY BUS
                 if (ac_bus1.isPowered)  // STBY BUS RUNNING ON AC BUS 1
                 {
-                    fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 28; // DC STANDBY BUS                    
+                    FSIcm.inst.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 28; // DC STANDBY BUS                    
                 }
                 else // STBY BUS RUNNING ON BATTERY
                 {
-                    fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 24; // DC STANDBY BUS
+                    FSIcm.inst.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 24; // DC STANDBY BUS
                 }
             }
             else
             {
-                fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 0; // AC STANDBY BUS
-                fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 0; // DC STANDBY BUS
+                FSIcm.inst.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE = 0; // AC STANDBY BUS
+                FSIcm.inst.SLI_DC_STBY_BUS_SECT_1_VOLTAGE = 0; // DC STANDBY BUS
             }
 
             // STBY PWR OFF LIGHT
-            if(fsi.SLI_BAT_BUS_VOLTAGE == 0 || fsi.SLI_DC_STBY_BUS_SECT_1_VOLTAGE == 0 || fsi.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE == 0)
+            if(FSIcm.inst.SLI_BAT_BUS_VOLTAGE == 0 || FSIcm.inst.SLI_DC_STBY_BUS_SECT_1_VOLTAGE == 0 || FSIcm.inst.SLI_AC_STBY_BUS_PHASE_1_VOLTAGE == 0)
             {
                 LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, true);
             }
             else LightController.set(FSIID.MBI_ELEC_STBY_STANDBY_PWR_OFF_LIGHT, false);
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -572,14 +568,14 @@ namespace Overheadpanel
         private static void switchAC1Systems(bool power)
         {
             //all displays
-            fsi.INT_POWER_EICAS = power;
-            fsi.INT_POWER_ISFD = power;
-            fsi.INT_POWER_LDU = power;
-            fsi.INT_POWER_ND_CPT = power;
-            fsi.INT_POWER_ND_FO = power;
-            fsi.INT_POWER_PFD_CPT = power;
-            fsi.INT_POWER_PFD_FO = power;
-            fsi.INT_POWER_SRMI = power;
+            FSIcm.inst.INT_POWER_EICAS = power;
+            FSIcm.inst.INT_POWER_ISFD = power;
+            FSIcm.inst.INT_POWER_LDU = power;
+            FSIcm.inst.INT_POWER_ND_CPT = power;
+            FSIcm.inst.INT_POWER_ND_FO = power;
+            FSIcm.inst.INT_POWER_PFD_CPT = power;
+            FSIcm.inst.INT_POWER_PFD_FO = power;
+            FSIcm.inst.INT_POWER_SRMI = power;
         }
         
         //switch AC Systems on BUS 2 on / Off
@@ -589,7 +585,7 @@ namespace Overheadpanel
 
         private static void switchDCSystems(bool power)
         {
-            fsi.CPF_MCP_POWER = power;
+            FSIcm.inst.CPF_MCP_POWER = power;
 
             //all status lights
             if (power)

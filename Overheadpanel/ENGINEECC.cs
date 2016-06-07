@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class ENGINEECC : Panel
     {
-        private static FSIClient fsi;
-
         public ENGINEECC()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead ENGINEECC");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.FSI_ENG1_THROTTLE_LEVER,
                     FSIID.FSI_ENG2_THROTTLE_LEVER
@@ -38,10 +35,9 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_EEC_ENG_2_EEC_ON_LIGHT, true);
             LightController.set(FSIID.MBI_EEC_ENG_2_REVERSER_LIGHT, false);
 
-            fsi.MBI_EEC_LAMPTEST = false;
+            FSIcm.inst.MBI_EEC_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -49,7 +45,7 @@ namespace Overheadpanel
         {
             if (id == FSIID.FSI_ENG1_THROTTLE_LEVER)
             {
-                if (fsi.FSI_ENG1_THROTTLE_LEVER < 0)
+                if (FSIcm.inst.FSI_ENG1_THROTTLE_LEVER < 0)
                 {
                     LightController.set(FSIID.MBI_EEC_ENG_1_REVERSER_LIGHT, true);
                 } else
@@ -61,7 +57,7 @@ namespace Overheadpanel
 
             if (id == FSIID.FSI_ENG2_THROTTLE_LEVER)
             {
-                if (fsi.FSI_ENG2_THROTTLE_LEVER < 0)
+                if (FSIcm.inst.FSI_ENG2_THROTTLE_LEVER < 0)
                 {
                     LightController.set(FSIID.MBI_EEC_ENG_2_REVERSER_LIGHT, true);
                 }

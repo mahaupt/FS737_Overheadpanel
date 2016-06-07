@@ -11,17 +11,14 @@ namespace Overheadpanel
     class PNEUMATICS : Panel
     { 
 
-        private static FSIClient fsi;
-
         public PNEUMATICS()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead PNEUMATICS");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            /*fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            /*FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_ELT_ARM_SWITCH
                 }
@@ -42,10 +39,9 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_PNEUMATICS_RIGHT_RAM_DOOR_FULL_OPEN_LIGHT, false);
             LightController.set(FSIID.MBI_PNEUMATICS_RIGHT_WING_BODY_OVERHEAT_LIGHT, false);
 
-            fsi.MBI_PNEUMATICS_LAMPTEST = false;
+            FSIcm.inst.MBI_PNEUMATICS_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 

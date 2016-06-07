@@ -9,18 +9,15 @@ using FSToolbox;
 namespace Overheadpanel
 {
     class HYDRAULICS : Panel
-    {
-        private static FSIClient fsi;
-
+    { 
         public HYDRAULICS()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead HYDRAULICS");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.SLI_GEN_1_RTL,
                     FSIID.SLI_GEN_2_RTL,
@@ -42,10 +39,9 @@ namespace Overheadpanel
             LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, true);
             LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, true);
 
-            fsi.MBI_HYDRAULICS_LAMPTEST = false;
+            FSIcm.inst.MBI_HYDRAULICS_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -54,7 +50,7 @@ namespace Overheadpanel
             //ELEC 1
             if (id == FSIID.MBI_HYDRAULICS_ELEC_1_SWITCH)
             {
-                if (fsi.MBI_HYDRAULICS_ELEC_1_SWITCH) {
+                if (FSIcm.inst.MBI_HYDRAULICS_ELEC_1_SWITCH) {
                     debug("HYDRAULICS ELEC 1 On");
                 } else {
                     debug("HYDRAULICS ELEC 1 Off");
@@ -65,7 +61,7 @@ namespace Overheadpanel
             //ELEC 2
             if (id == FSIID.MBI_HYDRAULICS_ELEC_2_SWITCH)
             {
-                if (fsi.MBI_HYDRAULICS_ELEC_2_SWITCH) {
+                if (FSIcm.inst.MBI_HYDRAULICS_ELEC_2_SWITCH) {
                     debug("HYDRAULICS ELEC 2 On");
                 } else {
                     debug("HYDRAULICS ELEC 2 Off");
@@ -77,7 +73,7 @@ namespace Overheadpanel
             //ENG 1
             if (id == FSIID.MBI_HYDRAULICS_ENG_1_SWITCH)
             {
-                if (fsi.MBI_HYDRAULICS_ENG_1_SWITCH == true) {
+                if (FSIcm.inst.MBI_HYDRAULICS_ENG_1_SWITCH == true) {
                     debug("HYDRAULICS ENG 1 On");
                 } else {
                     debug("HYDRAULICS ENG 1 Off");
@@ -90,7 +86,7 @@ namespace Overheadpanel
             //ENG 2
             if (id == FSIID.MBI_HYDRAULICS_ENG_2_SWITCH)
             {
-                if (fsi.MBI_HYDRAULICS_ENG_2_SWITCH) {
+                if (FSIcm.inst.MBI_HYDRAULICS_ENG_2_SWITCH) {
                     debug("HYDRAULICS ENG 2 On");
                 } else {
                     debug("HYDRAULICS ENG 2 Off");
@@ -115,7 +111,7 @@ namespace Overheadpanel
             bool hyd_B_elec = false;
 
             //gen 1 hyd pump
-            if (fsi.MBI_HYDRAULICS_ENG_1_SWITCH && fsi.SLI_GEN_1_RTL) {
+            if (FSIcm.inst.MBI_HYDRAULICS_ENG_1_SWITCH && FSIcm.inst.SLI_GEN_1_RTL) {
                 LightController.set(FSIID.MBI_HYDRAULICS_ENG_1_LOW_PRESSURE_LIGHT, false);
                 hyd_A_eng = true;
             } else {
@@ -123,7 +119,7 @@ namespace Overheadpanel
             }
             
             //gen 2 hyd pump
-            if (fsi.MBI_HYDRAULICS_ENG_2_SWITCH && fsi.SLI_GEN_2_RTL) {
+            if (FSIcm.inst.MBI_HYDRAULICS_ENG_2_SWITCH && FSIcm.inst.SLI_GEN_2_RTL) {
                 LightController.set(FSIID.MBI_HYDRAULICS_ENG_2_LOW_PRESSURE_LIGHT, false);
                 hyd_B_eng = true;
             } else {
@@ -131,7 +127,7 @@ namespace Overheadpanel
             }
 
             //elec 1 hyd pump
-            if (fsi.MBI_HYDRAULICS_ELEC_1_SWITCH && fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE > 50)
+            if (FSIcm.inst.MBI_HYDRAULICS_ELEC_1_SWITCH && FSIcm.inst.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE > 50)
             {
                 hyd_B_elec = true;
                 LightController.set(FSIID.MBI_HYDRAULICS_ELEC_1_LOW_PRESSURE_LIGHT, false);
@@ -141,7 +137,7 @@ namespace Overheadpanel
             }
 
             //elec 2 hyd pump
-            if (fsi.MBI_HYDRAULICS_ELEC_2_SWITCH && fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE > 50)
+            if (FSIcm.inst.MBI_HYDRAULICS_ELEC_2_SWITCH && FSIcm.inst.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE > 50)
             {
                 hyd_A_elec = true;
                 LightController.set(FSIID.MBI_HYDRAULICS_ELEC_2_LOW_PRESSURE_LIGHT, false);
@@ -155,28 +151,28 @@ namespace Overheadpanel
             //system A pressure
             if (hyd_A_elec || hyd_A_eng)
             {
-                fsi.SLI_HYD_A_PRESSURE = 3000.0f;
+                FSIcm.inst.SLI_HYD_A_PRESSURE = 3000.0f;
             } else
             {
-                fsi.SLI_HYD_A_PRESSURE = 0;
+                FSIcm.inst.SLI_HYD_A_PRESSURE = 0;
             }
 
             //system B pressure
             if (hyd_B_elec || hyd_B_eng)
             {
-                fsi.SLI_HYD_B_PRESSURE = 3000.0f;
+                FSIcm.inst.SLI_HYD_B_PRESSURE = 3000.0f;
             } else
             {
-                fsi.SLI_HYD_B_PRESSURE = 0;
+                FSIcm.inst.SLI_HYD_B_PRESSURE = 0;
             }
 
             //stby hyd pressure when one elec xfr bus powered or engines are alive
-            if (fsi.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE > 50 || fsi.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE > 50 || hyd_A_eng || hyd_B_eng)
+            if (FSIcm.inst.SLI_AC_XFR_BUS_1_PHASE_1_VOLTAGE > 50 || FSIcm.inst.SLI_AC_XFR_BUS_2_PHASE_1_VOLTAGE > 50 || hyd_A_eng || hyd_B_eng)
             {
-                fsi.SLI_HYD_STBY_PRESSURE = 3000;
+                FSIcm.inst.SLI_HYD_STBY_PRESSURE = 3000;
             } else
             {
-                fsi.SLI_HYD_STBY_PRESSURE = 0;
+                FSIcm.inst.SLI_HYD_STBY_PRESSURE = 0;
             }
 
             LightController.ProcessWrites();

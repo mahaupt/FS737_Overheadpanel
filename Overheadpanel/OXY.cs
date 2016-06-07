@@ -10,17 +10,14 @@ namespace Overheadpanel
 {
     class OXY : Panel
     {
-        private static FSIClient fsi;
-
         public OXY()
         {
             //debug variable
             is_debug = true;
 
             //starting FSI Client for IRS
-            fsi = new FSIClient("Overhead OXY");
-            fsi.OnVarReceiveEvent += fsiOnVarReceive;
-            fsi.DeclareAsWanted(new FSIID[]
+            FSIcm.inst.OnVarReceiveEvent += fsiOnVarReceive;
+            FSIcm.inst.DeclareAsWanted(new FSIID[]
                 {
                     FSIID.MBI_OXYGEN_PASS_OXY_SWITCH
                 }
@@ -29,10 +26,9 @@ namespace Overheadpanel
             //standard values
             LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, false);
 
-            fsi.MBI_OXYGEN_LAMPTEST = false;
+            FSIcm.inst.MBI_OXYGEN_LAMPTEST = false;
 
-            fsi.ProcessWrites();
-            LightController.ProcessWrites();
+            FSIcm.inst.ProcessWrites();
         }
 
 
@@ -40,7 +36,7 @@ namespace Overheadpanel
         {
             if (id == FSIID.MBI_OXYGEN_PASS_OXY_SWITCH)
             {
-                if (fsi.MBI_OXYGEN_PASS_OXY_SWITCH == true)
+                if (FSIcm.inst.MBI_OXYGEN_PASS_OXY_SWITCH == true)
                 {
                     debug("OXY Pass ON");
                 }
@@ -50,7 +46,7 @@ namespace Overheadpanel
                 }
                 
                 //ELT light
-                LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, fsi.MBI_OXYGEN_PASS_OXY_SWITCH);
+                LightController.set(FSIID.MBI_OXYGEN_PASS_OXY_LIGHT, FSIcm.inst.MBI_OXYGEN_PASS_OXY_SWITCH);
                 LightController.ProcessWrites();
             }
         }
