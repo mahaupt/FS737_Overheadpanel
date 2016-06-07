@@ -133,7 +133,7 @@ namespace Overheadpanel
             //beacon / anti-collision
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(2, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
+                FSIcm.inst.FSI_LIGHTS_BEACON = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH;
                 debug("LOWER_T Beacon " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_ANTI_COLLISION_SWITCH);
                 FSIcm.inst.ProcessWrites();
             }
@@ -141,7 +141,7 @@ namespace Overheadpanel
             //position / nav lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(1, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
+                FSIcm.inst.FSI_LIGHTS_NAV = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS;
                 debug("LOWER_T Navlights " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_POSITION_SWITCH_ON_POS);
                 FSIcm.inst.ProcessWrites();
             }
@@ -149,7 +149,7 @@ namespace Overheadpanel
             //strobe lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(5, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
+                FSIcm.inst.FSI_LIGHTS_STROBE = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS;
                 debug("LOWER_T Strobes " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_STROBE_SWITCH_ON_POS);
                 FSIcm.inst.ProcessWrites();
             }
@@ -157,7 +157,7 @@ namespace Overheadpanel
             //taxi lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(4, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
+                FSIcm.inst.FSI_LIGHTS_TAXI = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS;
                 debug("LOWER_T Taxi " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_TAXI_SWITCH_AUTO_BRT_POS);
                 FSIcm.inst.ProcessWrites();
             }
@@ -165,7 +165,7 @@ namespace Overheadpanel
             //landing lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(3, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
+                FSIcm.inst.FSI_LIGHTS_LANDING = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH;
                 debug("LOWER_T Landing " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LANDING_FIXED_LEFT_SWITCH);
                 FSIcm.inst.ProcessWrites();
             }
@@ -173,7 +173,7 @@ namespace Overheadpanel
             //logo lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(9, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
+                FSIcm.inst.FSI_LIGHTS_LOGO = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH;
                 debug("LOWER_T Logo " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_LOGO_SWITCH);
                 FSIcm.inst.ProcessWrites();
             }
@@ -181,16 +181,10 @@ namespace Overheadpanel
             //wing lights
             if (id == FSIID.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH)
             {
-                FSIcm.inst.FSI_LIGHTS = setLandingLights(8, FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
+                FSIcm.inst.FSI_LIGHTS_WING = FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH;
                 debug("LOWER_T Wing " + FSIcm.inst.MBI_LOWER_T_BOTTOM_LIGHTS_WING_SWITCH);
                 FSIcm.inst.ProcessWrites();
             }
-        }
-
-
-        private static short setLandingLights(byte lightNumber, bool power)
-        {
-            return BitConverter.ToInt16(new byte[] { lightNumber, Convert.ToByte(power) }, 0);
         }
     }
 }
