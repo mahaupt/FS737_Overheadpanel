@@ -54,7 +54,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             //OVERHEAT TEST ON
             if (id == FSIID.MBI_HEAT_OVHT_TEST_SWITCH && FSIcm.inst.MBI_HEAT_OVHT_TEST_SWITCH == true)

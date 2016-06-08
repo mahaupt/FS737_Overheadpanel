@@ -32,7 +32,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             if (id == FSIID.MBI_ELT_ARM_SWITCH)
             {

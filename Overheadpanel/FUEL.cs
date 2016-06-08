@@ -50,7 +50,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             //CROSSFEED
             if (id == FSIID.MBI_FUEL_CROSSFEED_SWITCH)

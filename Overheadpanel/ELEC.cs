@@ -28,18 +28,18 @@ namespace Overheadpanel
 {
     class ELEC : Panel
     {
-        private static bool bustransfer_auto = true, sby_pwr_auto = true, sby_pwr_bat = false, battery_online = false;
+        private bool bustransfer_auto = true, sby_pwr_auto = true, sby_pwr_bat = false, battery_online = false;
         private static AC_Powersource eng1_gen = new AC_Powersource();
         private static AC_Powersource eng2_gen = new AC_Powersource();
-        private static AC_Powersource ext_pwr_l = new AC_Powersource();
-        private static AC_Powersource ext_pwr_r = new AC_Powersource();
-        private static AC_Powersource apu_gen1 = new AC_Powersource();
-        private static AC_Powersource apu_gen2 = new AC_Powersource();
+        private AC_Powersource ext_pwr_l = new AC_Powersource();
+        private AC_Powersource ext_pwr_r = new AC_Powersource();
+        private AC_Powersource apu_gen1 = new AC_Powersource();
+        private AC_Powersource apu_gen2 = new AC_Powersource();
         public static AC_Powersource disconnected = new AC_Powersource(); // unpowered dummy to have some value available for the AC_BUS class
-        private static IDG idg1 = new IDG(eng1_gen);
-        private static IDG idg2 = new IDG(eng2_gen);
-        private static AC_BUS ac_bus1 = new AC_BUS();
-        private static AC_BUS ac_bus2 = new AC_BUS();
+        private IDG idg1 = new IDG(eng1_gen);
+        private IDG idg2 = new IDG(eng2_gen);
+        private AC_BUS ac_bus1 = new AC_BUS();
+        private AC_BUS ac_bus2 = new AC_BUS();
         
 
         public ELEC()
@@ -130,7 +130,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        private void fsiOnVarReceive(FSIID id)
         {
 
             //GROUND POWER
@@ -380,7 +380,7 @@ namespace Overheadpanel
 
 
         //
-        private static void simElectrics()
+        private void simElectrics()
         {
             //disconnect powersources if necessary
             if (!ac_bus1.powersource.isOnline)
@@ -565,7 +565,7 @@ namespace Overheadpanel
 
 
         //switch AC Systems on BUS 1 on / Off
-        private static void switchAC1Systems(bool power)
+        private void switchAC1Systems(bool power)
         {
             //all displays
             FSIcm.inst.INT_POWER_EICAS = power;
@@ -579,11 +579,11 @@ namespace Overheadpanel
         }
         
         //switch AC Systems on BUS 2 on / Off
-        private static void switchAC2Systems(bool power)
+        private void switchAC2Systems(bool power)
         {
         }
 
-        private static void switchDCSystems(bool power)
+        private void switchDCSystems(bool power)
         {
             FSIcm.inst.CPF_MCP_POWER = power;
 

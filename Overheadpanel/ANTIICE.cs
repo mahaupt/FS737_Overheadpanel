@@ -39,7 +39,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
 
             //WING

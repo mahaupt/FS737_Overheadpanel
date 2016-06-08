@@ -68,7 +68,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             //EMER EXIT LIGHTS
             if (id == FSIID.MBI_LOWER_T_MIDDLE_EMER_EXIT_LIGHTS_SWITCH_OFF_POS)

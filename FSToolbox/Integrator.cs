@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace FSToolbox
 {
-    class Integrator<T>
+    class Integrator
     {
-        private T standard;
-        private T value;
-        private T result;
+        private double standard;
+        private double value;
+        private double result;
 
-        public Integrator(T startValue)
+        public Integrator(double startValue)
         {
             value = startValue;
             standard = startValue;
         }
 
 
-        public void setStartValue(T start)
+        public void setStartValue(double start)
         {
             standard = start;
         }
@@ -27,15 +27,15 @@ namespace FSToolbox
 
         public void integrate(double time)
         {
-            //result += value * time;
+            result += value * time;
         }
 
-        public void setValue(T value)
+        public void setValue(double value)
         {
 
         }
 
-        public T getResult()
+        public double getResult()
         {
             return result;
         }

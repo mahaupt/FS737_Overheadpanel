@@ -41,7 +41,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             if (id == FSIID.FSI_ENG1_THROTTLE_LEVER)
             {

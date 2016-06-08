@@ -45,7 +45,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             //ELEC 1
             if (id == FSIID.MBI_HYDRAULICS_ELEC_1_SWITCH)

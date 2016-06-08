@@ -8,9 +8,9 @@ namespace Overheadpanel
 {
     class Panel
     {
-        protected static bool is_debug = false;
+        protected bool is_debug = false;
 
-        protected static void debug(String str)
+        protected void debug(String str)
         {
             if (is_debug)
             {

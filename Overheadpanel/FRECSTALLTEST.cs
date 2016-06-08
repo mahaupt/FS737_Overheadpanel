@@ -37,7 +37,7 @@ namespace Overheadpanel
         }
 
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
             //FLIGHT REC TEST
             if (id == FSIID.MBI_FLIGHT_REC_TEST_SWITCH)

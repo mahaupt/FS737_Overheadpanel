@@ -55,7 +55,7 @@ namespace Overheadpanel
             FSIcm.inst.ProcessWrites();
         }
 
-        static void fsiOnVarReceive(FSIID id)
+        void fsiOnVarReceive(FSIID id)
         {
 
             //LEFT IRS KNOB or Power
@@ -218,13 +218,16 @@ namespace Overheadpanel
         public bool acAvailable = true;
         public bool onDC = false;
 
+        private Timer alignmentStartTimer;
         private Timer alignTimer;
         private Timer dcOffTimer;
 
         public Irs_mod()
         {
+            alignmentStartTimer = new Timer(3.2, alignOnCallback);
             alignTimer = new Timer(60*3, alignedCallback);
             dcOffTimer = new Timer(3, dcOffCallback);
+            TimerManager.addTimer(alignmentStartTimer);
             TimerManager.addTimer(alignTimer);
             TimerManager.addTimer(dcOffTimer);
         }
@@ -236,7 +239,7 @@ namespace Overheadpanel
                 //set to online - start alignment
                 if (value)
                 {
-                    alignTimer.Start();
+                    alignmentStartTimer.Start();
 
                     if (acAvailable)
                     {
@@ -248,6 +251,7 @@ namespace Overheadpanel
                 }
                 else //set offline
                 {
+                    alignmentStartTimer.Reset();
                     alignTimer.Reset();
                     dcOffTimer.Reset();
 
@@ -279,6 +283,12 @@ namespace Overheadpanel
                     acAvailable = false;
                 }
             }
+        }
+
+        private void alignOnCallback()
+        {
+            alignTimer.Start();
+            IRS.sim_irs();
         }
 
         private void alignedCallback()
