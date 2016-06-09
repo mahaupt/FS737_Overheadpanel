@@ -174,7 +174,7 @@ namespace Overheadpanel
             //battery
             if (id == FSIID.MBI_ELEC_IND_BATTERY_SWITCH)
             {
-                if (FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH)
+                if (!FSIcm.inst.MBI_ELEC_IND_BATTERY_SWITCH)
                 {
                     debug("ELEC DC Bat On");
                     battery_online = true;
@@ -320,7 +320,7 @@ namespace Overheadpanel
             //BUS TRANSFER
             if (id == FSIID.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
             {
-                if (!FSIcm.inst.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
+                if (FSIcm.inst.MBI_ELEC_BUS_BUS_TRANSFER_SWITCH)
                 {
                     debug("ELEC BUS TRANSFER AUTO");
                     bustransfer_auto = true;

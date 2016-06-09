@@ -42,7 +42,7 @@ namespace Overheadpanel
             //FLIGHT REC TEST
             if (id == FSIID.MBI_FLIGHT_REC_TEST_SWITCH)
             {
-                if (FSIcm.inst.MBI_FLIGHT_REC_TEST_SWITCH)
+                if (!FSIcm.inst.MBI_FLIGHT_REC_TEST_SWITCH)
                 {
                     debug("FLIGHT REC TEST");
                     LightController.set(FSIID.MBI_FLIGHT_REC_OFF_LIGHT, false);
