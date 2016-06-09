@@ -6,6 +6,21 @@ using System.Threading.Tasks;
 using FSInterface;
 using FSToolbox;
 
+
+/*  ### FS737 IRS 0.1 ###
+    SIMPLIFIED SIMULATION OF B737-800 IRS
+    by Marcel Haupt and Arvid Preuss, 2016
+    
+    FOLLOWING CONDITIONS ARE SUPPOSED:
+    * IRS Quick Alignment
+    * NO FAILURES
+    
+    TODO:
+    * Displays on ATT Mode
+    * Failures
+    * (Position Displacement)
+*/
+
 namespace Overheadpanel
 {
     class IRS : Panel
